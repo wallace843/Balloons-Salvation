@@ -5,11 +5,19 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import java.util.Random;
+
+import balloons.niveis.BallonsNivel1;
+import balloons.objetos.Aviao;
 import balloons.objetos.Balao;
 import balloons.objetos.Nuvem;
+import balloons.objetos.Passaro;
+import balloons.objetos.Pipa;
 
 public class BalloonsController {
     private Nuvem[] nuvens;
+    private Pipa[] pipas;
+    private Passaro[] passaros;
+    private Aviao[] avioes;
     private Balao balao;
 
     public BalloonsController(){
@@ -21,6 +29,11 @@ public class BalloonsController {
         for(int i = 0; i < nuvens.length; i++){
             nuvens[i] = new Nuvem(nuvemTexture);
         }
+        BallonsNivel1 nivel1 = new BallonsNivel1();
+        this.pipas = nivel1.getPipas();
+        this.avioes = nivel1.getAvioes();
+        this.passaros = nivel1.getPassaros();
+
     }
 
     public void atualizar(OrthographicCamera camera){
@@ -49,10 +62,22 @@ public class BalloonsController {
     }
 
     public Sprite[] gerarSprites(){
-        Sprite[] sprites = new Sprite[nuvens.length + 1];
+        Sprite[] sprites = new Sprite[nuvens.length + avioes.length + pipas.length + passaros.length + 1];
         int i = 0;
         for(Nuvem n: nuvens){
             sprites[i] = n.getSprite();
+            i++;
+        }
+        for (Aviao a: avioes){
+            sprites[i] = a.getSprite();
+            i++;
+        }
+        for (Pipa p: pipas){
+            sprites[i] = p.getSprite();
+            i++;
+        }
+        for(Passaro pa: passaros){
+            sprites[i] = pa.getSprite();
             i++;
         }
         sprites[i] = balao.getSprite();
