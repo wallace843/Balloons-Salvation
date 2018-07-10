@@ -22,10 +22,6 @@ public class Aviao {
     public Aviao(Texture texture, float posicaoX, float posicaoY){
         this.naoSalvo = true;
         this.tamanho = 250;
-        if(posicaoX >= Gdx.graphics.getWidth()/2)
-            this.velocidade = -5;
-        else
-            this.velocidade = 5;
         this.sprite = new Sprite(texture);
         this.coordenadaX = posicaoX;;
         if(coordenadaX < Gdx.graphics.getWidth()/2)
@@ -55,6 +51,7 @@ public class Aviao {
                 naoSalvo = false;
                 a = (float) ((- (coordenadaY - balaoY))/(Math.pow(coordenadaX - balaoX, 2)));
                 b = (2*(coordenadaY - balaoY))/(coordenadaX - balaoX);
+                this.velocidade = (xAlvo - coordenadaX)/80;
             }
             coordenadaY = (float) (a* Math.pow(coordenadaX - xAlvo,2) + b*(coordenadaX - xAlvo));
 
@@ -62,7 +59,10 @@ public class Aviao {
             coordenadaX = coordenadaX + velocidade;
             coordenadaY = coordenadaY + balaoY;
         }
-        sprite.setPosition(coordenadaX, coordenadaY);
+        if (velocidade > 0)
+            sprite.setPosition(coordenadaX + Gdx.graphics.getWidth()/15, coordenadaY);
+        else
+            sprite.setPosition(coordenadaX, coordenadaY);
     }
 
     public Sprite getSprite() {
