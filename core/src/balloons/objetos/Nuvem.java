@@ -17,7 +17,7 @@ public class Nuvem {
     public Nuvem(Texture nuvemTexture){
         Random aleatorio = new Random();
         this.velocidade = (float) (aleatorio.nextFloat() - 0.5)/5;
-        this.tamanho = (float) (Math.sqrt(Math.pow(velocidade, 2))*1000000)%80 + 50;
+        this.tamanho = (float) (Math.sqrt(Math.pow(velocidade, 2))*1000000)%40 + 25;
         this.coordenadaX = aleatorio.nextInt(Gdx.graphics.getWidth() - 30);
         this.coordenadaY = aleatorio.nextInt(Gdx.graphics.getWidth()*10);
         this.nuvem = new Sprite(nuvemTexture);

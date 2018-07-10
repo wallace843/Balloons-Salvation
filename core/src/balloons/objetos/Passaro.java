@@ -11,7 +11,7 @@ public class Passaro {
     private Sprite sprite;
 
     public Passaro(Texture texture, float posicaoX, float posicaoY){
-        this.tamanho = 150;
+        this.tamanho = 200;
         this.sprite = new Sprite(texture);
         this.coordenadaX = posicaoX;;
         this.coordenadaY = posicaoY;

@@ -24,7 +24,7 @@ public class BalloonsController {
         Texture nuvemTexture = new Texture("nuvem.png");
         Texture balaoTexture = new Texture("balao.png");
         Random r = new Random();
-        this.nuvens = new Nuvem[r.nextInt(50) + 450];
+        this.nuvens = new Nuvem[r.nextInt(20) + 180];
         this.balao = new Balao(balaoTexture);
         for(int i = 0; i < nuvens.length; i++){
             nuvens[i] = new Nuvem(nuvemTexture);
@@ -39,11 +39,18 @@ public class BalloonsController {
     public void atualizar(OrthographicCamera camera){
         atualizarBalao();
         atualizarNuvens(camera);
+        atualizarAvioes(camera);
     }
 
     private void atualizarNuvens(OrthographicCamera cam){
         for(Nuvem n : nuvens){
             n.movimentar(cam);
+        }
+    }
+
+    private void atualizarAvioes(OrthographicCamera camera){
+        for (Aviao a : avioes){
+            a.movimentar(camera, balao.getCoordenadaX(), balao.getCoordenadaY());
         }
     }
 

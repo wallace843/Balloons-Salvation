@@ -11,7 +11,7 @@ public class Pipa {
     private Sprite sprite;
 
     public Pipa(Texture texture, float posicaoX, float posicaoY){
-        this.tamanho = 150;
+        this.tamanho = 270;
         this.sprite = new Sprite(texture);
         this.coordenadaX = posicaoX;;
         this.coordenadaY = posicaoY;
