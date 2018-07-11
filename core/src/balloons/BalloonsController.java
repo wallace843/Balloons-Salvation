@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Circle;
+
 import java.util.Random;
 
 import balloons.niveis.BallonsNivel1;
@@ -19,11 +21,15 @@ public class BalloonsController {
     private Passaro[] passaros;
     private Aviao[] avioes;
     private Balao balao;
+    private Circle colisaoBalao;
+    private Circle colisaoAviao;
 
     public BalloonsController(){
         Texture nuvemTexture = new Texture("nuvem.png");
         Texture balaoTexture = new Texture("balao.png");
         Random r = new Random();
+        colisaoBalao = new Circle();
+        colisaoAviao = new Circle();
         this.nuvens = new Nuvem[r.nextInt(20) + 180];
         this.balao = new Balao(balaoTexture);
         for(int i = 0; i < nuvens.length; i++){
@@ -40,6 +46,7 @@ public class BalloonsController {
         atualizarBalao();
         atualizarNuvens(camera);
         atualizarAvioes(camera);
+        checarColisao();
     }
 
     private void atualizarNuvens(OrthographicCamera cam){
@@ -50,7 +57,7 @@ public class BalloonsController {
 
     private void atualizarAvioes(OrthographicCamera camera){
         for (Aviao a : avioes){
-            a.movimentar(camera, balao.getCoordenadaX(), balao.getCoordenadaY());
+            a.movimentar(camera, balao);
         }
     }
 
@@ -66,6 +73,19 @@ public class BalloonsController {
                 balao.moverCima();
         }else
             balao.moverCima();
+    }
+
+    private void checarColisao(){
+        colisaoBalao.setRadius(balao.getTamanho()/5);
+        colisaoAviao.setRadius(avioes[0].getTamanho()/17);
+        colisaoBalao.setPosition(balao.getTamanho()/2 + balao.getSprite().getX(), balao.getTamanho()*3/5 + balao.getSprite().getY());
+        for(Aviao a : avioes){
+            colisaoAviao.setPosition(a.getTamanho()/2 + a.getSprite().getX(),a.getTamanho()/5 + a.getTamanho()/17 + a.getSprite().getY());
+            if(colisaoAviao.overlaps(colisaoBalao)){
+                a.setColidiu(true);
+                a.setNaoSalvo(true);
+            }
+        }
     }
 
     public Sprite[] gerarSprites(){

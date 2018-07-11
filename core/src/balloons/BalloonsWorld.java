@@ -2,10 +2,12 @@ package balloons;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class BalloonsWorld implements ApplicationListener {
 	private SpriteBatch batch;
@@ -32,12 +34,18 @@ public class BalloonsWorld implements ApplicationListener {
 		Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(camera.combined);
+
 		batch.begin();
 		for(Sprite s: sprites){
 			s.draw(batch);
 		}
 		batch.end();
-		camera.position.set(cameraX,++cameraY,0);
+		/*ShapeRenderer circulo = new ShapeRenderer();
+		circulo.begin(ShapeRenderer.ShapeType.Filled);
+		circulo.circle(Gdx.graphics.getWidth()/2, 230, 60);
+		circulo.setColor(Color.BLACK);
+		circulo.end();*/
+		camera.position.set(cameraX,cameraY++,0);
 		controller.atualizar(camera);
 		sprites = controller.gerarSprites();
 		camera.update();
