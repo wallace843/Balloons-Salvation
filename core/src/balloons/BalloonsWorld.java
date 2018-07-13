@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,9 +20,11 @@ public class BalloonsWorld implements ApplicationListener {
 	private float cameraX;
 	private Sprite miniBalao;
 	private ShapeRenderer forma;
+	private Sprite ballonsSalvatioLogo;
 
     @Override
     public void create() {
+		this.ballonsSalvatioLogo = new Sprite(new Texture("BalloonsSalvation.png"));
         this.forma = new ShapeRenderer();
         this.miniBalao = new Sprite(new Texture("balao.png"));
         miniBalao.setSize(Gdx.graphics.getWidth()/18,Gdx.graphics.getWidth()/18);
@@ -38,18 +41,41 @@ public class BalloonsWorld implements ApplicationListener {
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
+		if(controller.fimJogo()){
+			Gdx.gl.glClearColor(0x00 / 255.0f, 0x00 / 255.0f, 0x00 / 255.0f, 0xff / 255.0f);
+		}else
+    		Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(camera.combined);
-
+        if(controller.fimJogo())
+        	controller.getBalao().getSprite().setSize(0,0);
 		batch.begin();
 		for(Sprite s: sprites){
 			s.draw(batch);
 		}
+		if(controller.fimJogo()){
+			BitmapFont textoFim = new BitmapFont();
+			textoFim.setColor(1,1,1,1);
+			textoFim.getData().setScale(2);
+			textoFim.draw(batch, "FIM DE JOGO",camera.position.x, camera.position.y,0,1,true);
+		}
+
 		batch.end();
-		renderVida(batch);
-		camera.position.set(cameraX,cameraY++,0);
-		controller.atualizar(camera);
+
+		if(!controller.fimJogo()){
+            if(controller.balaoSalvo()){
+            	ballonsSalvatioLogo.setSize(Gdx.graphics.getWidth()/1.2f, Gdx.graphics.getWidth()/1.2f);
+            	ballonsSalvatioLogo.setPosition(Gdx.graphics.getWidth()/2 - ballonsSalvatioLogo.getWidth()/2, cameraY - ballonsSalvatioLogo.getHeight()/2);
+                batch.begin();
+                ballonsSalvatioLogo.draw(batch);
+                batch.end();
+				controller.atualizar(camera);
+            }else{
+                camera.position.set(cameraX, cameraY++, 0);
+                controller.atualizar(camera);
+                renderVida(batch);
+            }
+		}
 		sprites = controller.gerarSprites();
 		camera.update();
 	}
@@ -65,7 +91,6 @@ public class BalloonsWorld implements ApplicationListener {
         r = ((Gdx.graphics.getWidth()/4f - controller.getBalao().getVida())/(Gdx.graphics.getWidth()/4f))*255f;
         g = (controller.getBalao().getVida()/(Gdx.graphics.getWidth()/4f))*255f;
         b = 0;
-        System.out.println(r + " " + g + " " + b);
         forma.setColor(new Color((int)r << 24 | (int)g << 16 | (int)b << 8 | 0xff));
         forma.end();
     }

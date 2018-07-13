@@ -57,11 +57,11 @@ public class Aviao {
                     naoSalvo = false;
                     a = -20000000/Gdx.graphics.getWidth();
                     if (velocidade <= 0){
-                        velocidade = -6;
+                        velocidade = velocidade*7/10;
                         b = -2;
                     }
                     else{
-                        velocidade = 6;
+                        velocidade = velocidade*7/10;
                         b = 2;
                     }
                 }
@@ -78,7 +78,7 @@ public class Aviao {
                     naoSalvo = false;
                     a = (float) ((- (coordenadaY - balao.getCoordenadaY()))/(Math.pow(coordenadaX - balao.getCoordenadaX(), 2)));
                     b = (2*(coordenadaY - balao.getCoordenadaY()))/(coordenadaX - balao.getCoordenadaX());
-                    this.velocidade = (xAlvo - coordenadaX)/(100 - (8*cam.position.y)/(Gdx.graphics.getHeight()/2));
+                    this.velocidade = (xAlvo - coordenadaX)/(100 - (6*cam.position.y)/(Gdx.graphics.getHeight()/2));
                 }
                 coordenadaY = (float) (a* Math.pow(coordenadaX - xAlvo,2) + b*(coordenadaX - xAlvo));
 

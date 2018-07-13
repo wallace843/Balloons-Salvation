@@ -46,7 +46,8 @@ public class BalloonsController {
         atualizarBalao();
         atualizarNuvens(camera);
         atualizarAvioes(camera);
-        checarColisao();
+        if(!fimJogo())
+            checarColisao();
     }
 
     private void atualizarNuvens(OrthographicCamera cam){
@@ -90,6 +91,14 @@ public class BalloonsController {
                 a.setNaoSalvo(true);
             }
         }
+    }
+
+    public boolean fimJogo(){
+        return balao.getVida() == 0;
+    }
+
+    public boolean balaoSalvo(){
+        return balao.getSprite().getY() > Gdx.graphics.getWidth()*10;
     }
 
     public Sprite[] gerarSprites(){
