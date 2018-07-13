@@ -82,6 +82,10 @@ public class BalloonsController {
         for(Aviao a : avioes){
             colisaoAviao.setPosition(a.getTamanho()/2 + a.getSprite().getX(),a.getTamanho()/5 + a.getTamanho()/17 + a.getSprite().getY());
             if(colisaoAviao.overlaps(colisaoBalao)){
+                if(balao.getVida() - 20 < 0)
+                    balao.setVida(0);
+                else
+                    balao.setVida(balao.getVida() - 15f);
                 a.setColidiu(true);
                 a.setNaoSalvo(true);
             }
@@ -109,5 +113,9 @@ public class BalloonsController {
         }
         sprites[i] = balao.getSprite();
         return sprites;
+    }
+
+    public Balao getBalao() {
+        return balao;
     }
 }

@@ -36,7 +36,7 @@ public class Aviao {
         this.sprite.setOriginCenter();
         this.ajusteRotacao = -30;
         this.sprite.setPosition(coordenadaX,coordenadaY);
-        this.alturaAviao = 350;
+        this.alturaAviao = Gdx.graphics.getHeight()*4/10;
         this.direitaAviao = false;
         if(coordenadaX < Gdx.graphics.getWidth()/2){
             this.sprite.setFlip(true,false);
@@ -78,7 +78,7 @@ public class Aviao {
                     naoSalvo = false;
                     a = (float) ((- (coordenadaY - balao.getCoordenadaY()))/(Math.pow(coordenadaX - balao.getCoordenadaX(), 2)));
                     b = (2*(coordenadaY - balao.getCoordenadaY()))/(coordenadaX - balao.getCoordenadaX());
-                    this.velocidade = (xAlvo - coordenadaX)/80;
+                    this.velocidade = (xAlvo - coordenadaX)/(100 - (8*cam.position.y)/(Gdx.graphics.getHeight()/2));
                 }
                 coordenadaY = (float) (a* Math.pow(coordenadaX - xAlvo,2) + b*(coordenadaX - xAlvo));
 

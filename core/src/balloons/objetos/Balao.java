@@ -10,6 +10,7 @@ public class Balao {
     private float velocidade;
     private float coordenadaX;
     private float coordenadaY;
+    private float vida;
     private Sprite balao;
 
     public Balao(Texture balaoTexture) {
@@ -17,6 +18,7 @@ public class Balao {
         this.coordenadaY = 50;
         this.coordenadaX = Gdx.graphics.getWidth()/2 - tamanho/2;
         this.velocidade = 15;
+        this.vida = Gdx.graphics.getWidth()/4.f;
         this.balao = new Sprite(balaoTexture);
         this.balao.setOriginCenter();
         this.balao.setSize(tamanho,tamanho);
@@ -52,6 +54,14 @@ public class Balao {
 
     public float getTamanho() {
         return tamanho;
+    }
+
+    public float getVida() {
+        return vida;
+    }
+
+    public void setVida(float vida) {
+        this.vida = vida;
     }
 
     public Sprite getSprite() {
