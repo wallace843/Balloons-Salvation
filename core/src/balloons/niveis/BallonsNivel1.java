@@ -26,7 +26,7 @@ public class BallonsNivel1 {
     }
 
     public enum PIXEL_TIPO{
-        PIPA(0, 255, 0),
+        PIPA(255, 0, 0),
         AVIAO(255, 255, 255),
         PASSARO(0, 0, 255);
 

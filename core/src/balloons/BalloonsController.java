@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Random;
 
@@ -24,7 +25,9 @@ public class BalloonsController {
     private Aviao[] avioes;
     private Balao balao;
     private Circle colisaoBalao;
+    private Rectangle colisaoBalaoRect;
     private Circle colisaoInimigo;
+    private Rectangle colisaoPipa;
 
     public BalloonsController(){
         Texture nuvemTexture = new Texture("nuvem.png");
@@ -32,6 +35,8 @@ public class BalloonsController {
         Random r = new Random();
         colisaoBalao = new Circle();
         colisaoInimigo = new Circle();
+        colisaoPipa = new Rectangle();
+        colisaoBalaoRect  = new Rectangle();
         this.nuvens = new Nuvem[r.nextInt(20) + 180];
         this.balao = new Balao(balaoTexture);
         for(int i = 0; i < nuvens.length; i++){
@@ -106,6 +111,19 @@ public class BalloonsController {
             if(colisaoInimigo.overlaps(colisaoBalao))
             balao.setVida(balao.getVida() - 1f);
         }
+
+        colisaoBalaoRect.set(balao.getSprite().getX() + 130f,balao.getSprite().getY() + 230, 40, 20);
+        for (Pipa p : pipas){
+            colisaoPipa.set(p.getSprite().getX(), p.getSprite().getY() + 270f/4f, 16f*270f/9f, 20);
+            if(colisaoPipa.overlaps(colisaoBalaoRect)){
+                balao.setVelocidade(5);
+                balao.setSubida(0);
+                break;
+            }else{
+                balao.setVelocidade(10);
+                balao.setSubida(1);
+            }
+        }
     }
 
     public boolean fimJogo(){
@@ -115,7 +133,7 @@ public class BalloonsController {
     public boolean inicioJogo() { return balao.getSprite().getY() < BalloonsConstants.ALT_TELA/2;}
 
     public boolean balaoSalvo(){
-        return balao.getSprite().getY() > Gdx.graphics.getWidth()*10;
+        return balao.getSprite().getY() > BalloonsConstants.LARG_TELA*10;
     }
 
     public BalloonsObjetos[] gerarObjetos(){

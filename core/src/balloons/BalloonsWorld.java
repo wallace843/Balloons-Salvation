@@ -77,12 +77,12 @@ public class BalloonsWorld implements ApplicationListener {
 		}
 
 		batch.end();
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
+
 		if(!controller.fimJogo()){
             if(controller.balaoSalvo()){
-            	ballonsSalvatioLogo.setSize(Gdx.graphics.getWidth()/1.2f, Gdx.graphics.getWidth()/1.2f);
-            	ballonsSalvatioLogo.setPosition(Gdx.graphics.getWidth()/2 - ballonsSalvatioLogo.getWidth()/2, cameraY - ballonsSalvatioLogo.getHeight()/2);
+            	ballonsSalvatioLogo.setSize(BalloonsConstants.LARG_TELA, BalloonsConstants.LARG_TELA);
+            	ballonsSalvatioLogo.setPosition(Gdx.graphics.getWidth()/2 - ballonsSalvatioLogo.getWidth()/2,
+                        10*BalloonsConstants.LARG_TELA + BalloonsConstants.ALT_TELA/2 - ballonsSalvatioLogo.getHeight()/2);
                 batch.begin();
                 ballonsSalvatioLogo.draw(batch);
                 batch.end();
@@ -90,10 +90,12 @@ public class BalloonsWorld implements ApplicationListener {
             }else{
                 camera.position.set(cameraX,objetos[objetos.length - 1].getSprite().getY() + Gdx.graphics.getHeight()/2 - 50, 0);
                 controller.atualizar(camera);
+				Gdx.gl.glEnable(GL20.GL_BLEND);
+				Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
                 renderMoldura();
+				Gdx.gl.glDisable(GL20.GL_BLEND);
             }
 		}
-		Gdx.gl.glDisable(GL20.GL_BLEND);
 		objetos = controller.gerarObjetos();
 		camera.update();
 	}
