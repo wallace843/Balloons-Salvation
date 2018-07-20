@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import java.util.Random;
 
-public class Nuvem {
+public class Nuvem extends BalloonsObjetos{
     private float velocidade;
     private float tamanho;
     private float coordenadaX;

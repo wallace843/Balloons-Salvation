@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import balloons.Util.BalloonsConstants;
 
-public class Balao {
+
+public class Balao extends BalloonsObjetos{
     private float tamanho;
     private float velocidade;
     private float coordenadaX;
@@ -18,7 +20,7 @@ public class Balao {
         this.coordenadaY = 50;
         this.coordenadaX = Gdx.graphics.getWidth()/2 - tamanho/2;
         this.velocidade = 15;
-        this.vida = Gdx.graphics.getWidth()/4.f;
+        this.vida = BalloonsConstants.LARG_TELA/4f;
         this.balao = new Sprite(balaoTexture);
         this.balao.setOriginCenter();
         this.balao.setSize(tamanho,tamanho);

@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-import balloons.niveis.BallonsNivel1;
-
-public class Aviao {
+public class Aviao extends BalloonsObjetos {
     private int tamanho;
     private float velocidade;
     private float coordenadaX;
@@ -57,12 +55,12 @@ public class Aviao {
                     naoSalvo = false;
                     a = -20000000/Gdx.graphics.getWidth();
                     if (velocidade <= 0){
-                        velocidade = velocidade*7/10;
                         b = -2;
+                        velocidade = -15;
                     }
                     else{
-                        velocidade = velocidade*7/10;
                         b = 2;
+                        velocidade = 15;
                     }
                 }
                 coordenadaY = (float) ((a* Math.pow(coordenadaX - xAlvo, 2))/10000000 + b*(coordenadaX - xAlvo));

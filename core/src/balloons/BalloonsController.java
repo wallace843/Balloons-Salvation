@@ -8,9 +8,11 @@ import com.badlogic.gdx.math.Circle;
 
 import java.util.Random;
 
+import balloons.Util.BalloonsConstants;
 import balloons.niveis.BallonsNivel1;
 import balloons.objetos.Aviao;
 import balloons.objetos.Balao;
+import balloons.objetos.BalloonsObjetos;
 import balloons.objetos.Nuvem;
 import balloons.objetos.Passaro;
 import balloons.objetos.Pipa;
@@ -22,14 +24,14 @@ public class BalloonsController {
     private Aviao[] avioes;
     private Balao balao;
     private Circle colisaoBalao;
-    private Circle colisaoAviao;
+    private Circle colisaoInimigo;
 
     public BalloonsController(){
         Texture nuvemTexture = new Texture("nuvem.png");
         Texture balaoTexture = new Texture("balao.png");
         Random r = new Random();
         colisaoBalao = new Circle();
-        colisaoAviao = new Circle();
+        colisaoInimigo = new Circle();
         this.nuvens = new Nuvem[r.nextInt(20) + 180];
         this.balao = new Balao(balaoTexture);
         for(int i = 0; i < nuvens.length; i++){
@@ -46,6 +48,7 @@ public class BalloonsController {
         atualizarBalao();
         atualizarNuvens(camera);
         atualizarAvioes(camera);
+        atualizarPassaros();
         if(!fimJogo())
             checarColisao();
     }
@@ -59,6 +62,12 @@ public class BalloonsController {
     private void atualizarAvioes(OrthographicCamera camera){
         for (Aviao a : avioes){
             a.movimentar(camera, balao);
+        }
+    }
+
+    private void atualizarPassaros(){
+        for(Passaro p: passaros){
+            p.movimentar(balao);
         }
     }
 
@@ -78,11 +87,11 @@ public class BalloonsController {
 
     private void checarColisao(){
         colisaoBalao.setRadius(balao.getTamanho()/5);
-        colisaoAviao.setRadius(avioes[0].getTamanho()/17);
+        colisaoInimigo.setRadius(avioes[0].getTamanho()/17);
         colisaoBalao.setPosition(balao.getTamanho()/2 + balao.getSprite().getX(), balao.getTamanho()*3/5 + balao.getSprite().getY());
         for(Aviao a : avioes){
-            colisaoAviao.setPosition(a.getTamanho()/2 + a.getSprite().getX(),a.getTamanho()/5 + a.getTamanho()/17 + a.getSprite().getY());
-            if(colisaoAviao.overlaps(colisaoBalao)){
+            colisaoInimigo.setPosition(a.getTamanho()/2 + a.getSprite().getX(),a.getTamanho()/5 + a.getTamanho()/17 + a.getSprite().getY());
+            if(colisaoInimigo.overlaps(colisaoBalao)){
                 if(balao.getVida() - 20 < 0)
                     balao.setVida(0);
                 else
@@ -91,37 +100,45 @@ public class BalloonsController {
                 a.setNaoSalvo(true);
             }
         }
+        colisaoInimigo.setRadius(15);
+        for(Passaro p : passaros){
+            colisaoInimigo.setPosition(p.getSprite().getWidth()/2 + p.getSprite().getX(),20 + p.getSprite().getY());
+            if(colisaoInimigo.overlaps(colisaoBalao))
+            balao.setVida(balao.getVida() - 1f);
+        }
     }
 
     public boolean fimJogo(){
         return balao.getVida() == 0;
     }
 
+    public boolean inicioJogo() { return balao.getSprite().getY() < BalloonsConstants.ALT_TELA/2;}
+
     public boolean balaoSalvo(){
         return balao.getSprite().getY() > Gdx.graphics.getWidth()*10;
     }
 
-    public Sprite[] gerarSprites(){
-        Sprite[] sprites = new Sprite[nuvens.length + avioes.length + pipas.length + passaros.length + 1];
+    public BalloonsObjetos[] gerarObjetos(){
+        BalloonsObjetos[] objetos = new BalloonsObjetos[nuvens.length + avioes.length + pipas.length + passaros.length + 1];
         int i = 0;
         for(Nuvem n: nuvens){
-            sprites[i] = n.getSprite();
+            objetos[i] = n;
             i++;
         }
         for (Aviao a: avioes){
-            sprites[i] = a.getSprite();
+            objetos[i] = a;
             i++;
         }
         for (Pipa p: pipas){
-            sprites[i] = p.getSprite();
+            objetos[i] = p;
             i++;
         }
         for(Passaro pa: passaros){
-            sprites[i] = pa.getSprite();
+            objetos[i] = pa;
             i++;
         }
-        sprites[i] = balao.getSprite();
-        return sprites;
+        objetos[i] = balao;
+        return objetos;
     }
 
     public Balao getBalao() {
