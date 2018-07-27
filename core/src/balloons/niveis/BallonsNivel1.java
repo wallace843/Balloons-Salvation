@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +51,9 @@ public class BallonsNivel1 {
         int currentPixel;
         Texture aviaoTexture = new Texture("aviao_papel.png");
         Texture pipaTexture = new Texture("pipa.png");
-        Texture passaroTexture = new Texture("passaro.png");
+        Array<TextureRegion> passaroVoo = pegarImageFrames("passaro.png");
+        Array<TextureRegion> passaroPara = pegarImageFrames("passaro2.png");
+        Array<TextureRegion> passaroAtaq = pegarImageFrames("passaro3.png");
         float escala = Gdx.graphics.getWidth() / mapa.getWidth();
         for(int pixelY = 0; pixelY < mapa.getHeight(); pixelY++ ){
             for(int pixelX = 0; pixelX < mapa.getWidth(); pixelX++){
@@ -57,12 +61,23 @@ public class BallonsNivel1 {
                 if(PIXEL_TIPO.AVIAO.mesmaCor(currentPixel)){
                     avioes.add(new Aviao(aviaoTexture, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.PASSARO.mesmaCor(currentPixel)){
-                    passaros.add(new Passaro(passaroTexture, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
+                    passaros.add(new Passaro(passaroVoo, passaroPara, passaroAtaq, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.PIPA.mesmaCor(currentPixel)){
                     pipas.add(new Pipa(pipaTexture,pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }
             }
         }
+    }
+
+    private Array<TextureRegion> pegarImageFrames(String local){
+        TextureRegion tmp[][] = TextureRegion.split(new Texture(local), 400, 400);
+        Array<TextureRegion> regions = new Array<TextureRegion>();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; i < 2; i++) {
+                regions.add(tmp[i][j]);
+            }
+        }
+        return regions;
     }
 
     public Pipa[] getPipas(){

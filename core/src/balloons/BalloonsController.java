@@ -49,11 +49,11 @@ public class BalloonsController {
 
     }
 
-    public void atualizar(OrthographicCamera camera){
+    public void atualizar(OrthographicCamera camera, float deltaTime){
         atualizarBalao();
         atualizarNuvens(camera);
         atualizarAvioes(camera);
-        atualizarPassaros();
+        atualizarPassaros(deltaTime);
         if(!fimJogo())
             checarColisao();
     }
@@ -70,9 +70,9 @@ public class BalloonsController {
         }
     }
 
-    private void atualizarPassaros(){
+    private void atualizarPassaros(float deltaTime){
         for(Passaro p: passaros){
-            p.movimentar(balao);
+            p.movimentar(balao, deltaTime);
         }
     }
 

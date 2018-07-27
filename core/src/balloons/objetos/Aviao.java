@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Aviao extends BalloonsObjetos {
     private int tamanho;
@@ -97,6 +98,11 @@ public class Aviao extends BalloonsObjetos {
 
     public Sprite getSprite() {
         return sprite;
+    }
+
+    @Override
+    public void renderizar(SpriteBatch batch) {
+
     }
 
     public void setColidiu(boolean colidiu){

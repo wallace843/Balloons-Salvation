@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.sun.net.ssl.SSLPermission;
-
 import balloons.Util.BalloonsConstants;
 import balloons.objetos.BalloonsObjetos;
 
@@ -86,10 +84,10 @@ public class BalloonsWorld implements ApplicationListener {
                 batch.begin();
                 ballonsSalvatioLogo.draw(batch);
                 batch.end();
-				controller.atualizar(camera);
+				controller.atualizar(camera,Gdx.graphics.getDeltaTime());
             }else{
                 camera.position.set(cameraX,objetos[objetos.length - 1].getSprite().getY() + Gdx.graphics.getHeight()/2 - 50, 0);
-                controller.atualizar(camera);
+                controller.atualizar(camera,Gdx.graphics.getDeltaTime());
 				Gdx.gl.glEnable(GL20.GL_BLEND);
 				Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
                 renderMoldura();

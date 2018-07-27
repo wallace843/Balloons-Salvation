@@ -1,10 +1,12 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import java.util.Random;
-
 import balloons.Util.BalloonsConstants;
 
 public class Passaro extends BalloonsObjetos{
@@ -13,6 +15,7 @@ public class Passaro extends BalloonsObjetos{
     private float velocidade;
     private float distanciaAtaque;
     private boolean flagInicio;
+    private boolean flagAproximacao;
     private boolean flagAtaque;
     private boolean flagRetorno;
     private boolean flagSaida;
@@ -20,136 +23,173 @@ public class Passaro extends BalloonsObjetos{
     private float deslY;
     private float distanciaBase;
     private boolean direita;
+    private Animation passaroVoo;
+    private Animation passaroPara;
+    private Animation passaroAtaq;
+    private boolean flip;
+    private float x;
+    private float y;
+    float deltaTime;
 
-    public Passaro(Texture texture, float posicaoX, float posicaoY){
-        this.sprite = new Sprite(texture);
-        this.sprite.setSize(200,199);
-        if(posicaoX + sprite.getWidth() > Gdx.graphics.getWidth())
-            posicaoX = Gdx.graphics.getWidth() - sprite.getWidth() - 1;
-        this.sprite.setPosition(posicaoX,posicaoY);
-        this.sprite.setOriginCenter();
-        Random aleatorio = new Random();
-        this.nAtaques = aleatorio.nextInt(2) + 3;
-        this.velocidade = 10;//5 + 1000/ (BalloonsConstants.LARG_TELA*10);
-        this.distanciaAtaque = BalloonsConstants.ALT_TELA/1.5f;
-        this.flagInicio = true;
-        this.flagAtaque = false;
-        this.flagRetorno = false;
-        this.flagSaida = false;
-        if(posicaoX + sprite.getWidth() <= BalloonsConstants.LARG_TELA/2) {
+    public Passaro(Array<TextureRegion> passaroVoo, Array<TextureRegion> passaroPara, Array<TextureRegion> passaroAtaq, float posicaoX, float posicaoY){
+        this.deltaTime = Gdx.graphics.getDeltaTime();
+        this.passaroVoo = new Animation<TextureRegion>(1f/12f,passaroVoo, Animation.PlayMode.LOOP);
+        this.passaroPara = new Animation<TextureRegion>(1f/12f,passaroPara,Animation.PlayMode.LOOP);
+        this.passaroAtaq = new Animation<TextureRegion>(1f/12f,passaroAtaq);
+        this.y = posicaoY;
+        this.x = posicaoX;
+        this.velocidade = 10;
+        if(posicaoX + 200 > Gdx.graphics.getWidth())
+            this.x = Gdx.graphics.getWidth() - 200;
+        this.flip = false;
+        if(posicaoX + 200 <= BalloonsConstants.LARG_TELA/2) {
             deslX = 5;
-            this.sprite.setRotation(-45);
-            this.sprite.rotate(0);
             direita = true;
         }
         else if(posicaoX > BalloonsConstants.LARG_TELA/2) {
             deslX = -5;
-            this.sprite.setRotation(45);
-            sprite.setFlip(true,false);
+            flip = true;
             direita = false;
         }
         deslY = (float) Math.sqrt(Math.pow(velocidade,2) - Math.pow(deslX,2));
+        Random aleatorio = new Random();
+        this.nAtaques = aleatorio.nextInt(2) + 3;
+        this.distanciaAtaque = BalloonsConstants.ALT_TELA/1.5f;
+        this.flagInicio = true;
+        this.flagAproximacao = false;
+        this.flagAtaque = false;
+        this.flagRetorno = false;
+        this.flagSaida = false;
+        atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
     }
 
-    public void movimentar(Balao balao){
-       // velocidade = 5 + 20*balao.getSprite().getY()/ (BalloonsConstants.LARG_TELA*10);
-        float alturaBalao = balao.getSprite().getY() + balao.getSprite().getHeight() - 80;
-        if(sprite.getY() - alturaBalao < distanciaAtaque){
+    public void movimentar(Balao balao, float deltaTime){
+        float alturaBalao = balao.getSprite().getY() + balao.getSprite().getHeight() + 10;
+        float xBalao = balao.getSprite().getX();
+        if(y - alturaBalao < distanciaAtaque){
             if(flagInicio){
-                if(BalloonsConstants.LARG_TELA/2 < sprite.getX()
-                        || BalloonsConstants.LARG_TELA/2 > sprite.getX() + sprite.getWidth()){
-                    sprite.setPosition(sprite.getX()+deslX, sprite.getY() - deslY);
-                }else{
-                    distanciaBase = sprite.getY() - alturaBalao;
-                    float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
-                            + Math.pow(balao.getSprite().getX() + 50 - sprite.getX(),2)));
-                    deslX = (balao.getSprite().getX() + 50 - sprite.getX())*fator;
-                    deslY = -distanciaBase * fator;
-                    if(deslX >= 0 && direita == false){
-                        sprite.setRotation(-45);
-                        sprite.setFlip(false,false);
-                        direita = true;
-                    }else if(deslX < 0 && direita == true){
-                        sprite.setRotation(45);
-                        sprite.setFlip(true,false);
-                        direita = false;
-                    }else{
-                        if(deslX >= 0)
-                            sprite.setRotation(-45);
-                        else
-                            sprite.setRotation(45);
-                    }
-                    flagInicio = false;
-                    flagAtaque = true;
-                }
+                passaroInicial(alturaBalao,xBalao);
+            }else if(flagAproximacao){
+                passaroAproximacao(alturaBalao);
             }else if(flagAtaque){
-                if(distanciaBase > 0) {
-                    distanciaBase = distanciaBase + deslY;
-                    if(-distanciaBase / deslY < 9){
-                        if(direita)
-                            sprite.rotate(-10f);
-                        else
-                            sprite.rotate(10f);
-                    }
-                    sprite.setPosition(sprite.getX() + deslX,alturaBalao + distanciaBase);
-                }else {
-                    --nAtaques;
-                    flagAtaque = false;
-                    flagRetorno = true;
-                }
+                passaroAtaque(alturaBalao);
             }else if(flagRetorno){
-                if(distanciaBase < BalloonsConstants.ALT_TELA/2) {
-                    distanciaBase = distanciaBase + velocidade;
-                    if(distanciaBase / velocidade < 9){
-                        if(direita)
-                            sprite.rotate(10f);
-                        else
-                            sprite.rotate(-10f);
-                    }
-                    sprite.setPosition(sprite.getX(), alturaBalao + distanciaBase);
-                }
-                else if(nAtaques > 0){
-                    float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
-                            + Math.pow(balao.getSprite().getX() + 50 - sprite.getX(),2)));
-                    deslX = (balao.getSprite().getX() + 50 - sprite.getX())*fator;
-                    deslY = -distanciaBase * fator;
-                    if(deslX >= 0 && direita == false){
-                        sprite.setRotation(-45);
-                        sprite.setFlip(false,false);
-                        direita = true;
-                    }else if(deslX < 0 && direita == true){
-                        sprite.setRotation(45);
-                        sprite.setFlip(true,false);
-                        direita = false;
-                    }else{
-                        if(deslX >= 0)
-                            sprite.setRotation(-45);
-                        else
-                            sprite.setRotation(45);
-                    }
-                    flagAtaque = true;
-                    flagRetorno =  false;
-                }
-                else{
-                    flagSaida = true;
-                    flagRetorno = false;
-                }
+                passaroRetorno(alturaBalao,balao.getSprite().getX());
             }else if(flagSaida){
-                if(sprite.getX() + sprite.getWidth()/2 >= BalloonsConstants.LARG_TELA/2){
-                    sprite.setPosition(sprite.getX() + velocidade, sprite.getY());
-                    sprite.setRotation(-45);
-                    sprite.setFlip(false,false);
-                }
-                else{
-                    sprite.setPosition(sprite.getX() - velocidade, sprite.getY());
-                    sprite.setRotation(45);
-                    sprite.setFlip(true,false);
-                }
+                passaroSair();
             }
         }
     }
 
+    private void passaroInicial(float alturaBalao, float xBalao){
+        if(BalloonsConstants.LARG_TELA/2 < x
+                || BalloonsConstants.LARG_TELA/2 > x + 200){
+            x = x + deslX;
+            y = y - deslY;
+            deltaTime += Gdx.graphics.getDeltaTime();
+            atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
+        }else{
+            distanciaBase = y - alturaBalao + 10;
+            float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
+                    + Math.pow(xBalao + 50 - x,2)));
+            deslX = (xBalao + 50 - x)*fator;
+            deslY = -distanciaBase * fator;
+            if(deslX >= 0 && direita == false){
+                flip = false;
+                direita = true;
+            }else if(deslX < 0 && direita == true){
+                flip = true;
+                direita = false;
+            }
+            flagInicio = false;
+            flagAproximacao = true;
+            deltaTime = 0f;
+        }
+    }
+
+    private void passaroAproximacao(float alturaBalao){
+        if(distanciaBase > 9) {
+            distanciaBase = distanciaBase + deslY;
+            x = x +deslX;
+            y = alturaBalao + distanciaBase;
+            deltaTime += Gdx.graphics.getDeltaTime();
+            atualizarSprite((TextureRegion) this.passaroPara.getKeyFrame(deltaTime,true));
+        }else {
+            --nAtaques;
+            flagAtaque = true;
+            flagAproximacao = false;
+            deltaTime = 0f;
+        }
+    }
+
+    private void passaroAtaque(float alturaBalao){
+        if(!passaroAtaq.isAnimationFinished(deltaTime)){
+            atualizarSprite((TextureRegion) this.passaroAtaq.getKeyFrame(deltaTime));
+            distanciaBase = distanciaBase + deslY;
+            x = x + deslX;
+            y = alturaBalao + distanciaBase;
+            deltaTime += Gdx.graphics.getDeltaTime();
+        }else {
+            flagRetorno = true;
+            flagAtaque = false;
+            deltaTime = 0f;
+        }
+    }
+
+    private void passaroRetorno(float alturaBalao, float xBalao){
+        System.out.println(distanciaBase);
+        if(distanciaBase < BalloonsConstants.ALT_TELA/2) {
+            distanciaBase = distanciaBase + velocidade;
+            y = alturaBalao + distanciaBase;
+            this.deltaTime += Gdx.graphics.getDeltaTime();
+            atualizarSprite((TextureRegion) this.passaroPara.getKeyFrame(deltaTime,true));
+        }else if(nAtaques > 0){
+            float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
+                    + Math.pow(xBalao + 50 - x,2)));
+            deslX = (xBalao + 50 - x)*fator;
+            deslY = -distanciaBase * fator;
+            if(deslX >= 0 && direita == false){
+                flip = false;
+                direita = true;
+            }else if(deslX < 0 && direita == true){
+                flip = true;
+                direita = false;
+            }
+            flagAproximacao = true;
+            flagRetorno =  false;
+        }else{
+            flagSaida = true;
+            flagRetorno = false;
+            this.deltaTime = 0f;
+        }
+    }
+
+    private void passaroSair(){
+        if(x + 100 >= BalloonsConstants.LARG_TELA/2){
+            x = x + velocidade;
+            flip = false;
+        }
+        else{
+            x = x - velocidade;
+            flip = true;
+        }
+        this.deltaTime += Gdx.graphics.getDeltaTime();
+        atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
+    }
+
+   private void atualizarSprite(TextureRegion textureRegion){
+        this.sprite = new Sprite(textureRegion);
+        sprite.setSize(200,200);
+        sprite.setPosition(x,y);
+        sprite.setFlip(flip,false);
+   }
+
     public Sprite getSprite() {
         return sprite;
+    }
+
+    @Override
+    public void renderizar(SpriteBatch batch) {
+        sprite.draw(batch);
     }
 }

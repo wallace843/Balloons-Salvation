@@ -3,6 +3,7 @@ package balloons.objetos;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import balloons.Util.BalloonsConstants;
 
@@ -23,5 +24,10 @@ public class Pipa extends BalloonsObjetos {
 
     public Sprite getSprite() {
         return sprite;
+    }
+
+    @Override
+    public void renderizar(SpriteBatch batch) {
+
     }
 }

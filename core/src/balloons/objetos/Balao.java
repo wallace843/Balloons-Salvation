@@ -3,6 +3,7 @@ package balloons.objetos;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import balloons.Util.BalloonsConstants;
 
@@ -72,6 +73,11 @@ public class Balao extends BalloonsObjetos{
 
     public Sprite getSprite() {
         return balao;
+    }
+
+    @Override
+    public void renderizar(SpriteBatch batch) {
+
     }
 
     public void setVelocidade(float velocidade) {
