@@ -50,7 +50,7 @@ public class BallonsNivel1 {
     private void init(){
         int currentPixel;
         Texture aviaoTexture = new Texture("aviao_papel.png");
-        Texture pipaTexture = new Texture("pipa.png");
+        Array<TextureRegion> pipaMov = pegarImageFrames("pipa1.png");
         Array<TextureRegion> passaroVoo = pegarImageFrames("passaro.png");
         Array<TextureRegion> passaroPara = pegarImageFrames("passaro2.png");
         Array<TextureRegion> passaroAtaq = pegarImageFrames("passaro3.png");
@@ -63,17 +63,18 @@ public class BallonsNivel1 {
                 }else if(PIXEL_TIPO.PASSARO.mesmaCor(currentPixel)){
                     passaros.add(new Passaro(passaroVoo, passaroPara, passaroAtaq, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.PIPA.mesmaCor(currentPixel)){
-                    pipas.add(new Pipa(pipaTexture,pixelX * escala, (mapa.getHeight() - pixelY) * escala));
+                    pipas.add(new Pipa(pipaMov,pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }
             }
         }
     }
 
     private Array<TextureRegion> pegarImageFrames(String local){
-        TextureRegion tmp[][] = TextureRegion.split(new Texture(local), 400, 400);
+        Texture sheet =  new Texture(local);
+        TextureRegion tmp[][] = TextureRegion.split(sheet, sheet.getWidth()/3, sheet.getHeight()/2);
         Array<TextureRegion> regions = new Array<TextureRegion>();
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; i < 2; i++) {
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 3; j++) {
                 regions.add(tmp[i][j]);
             }
         }

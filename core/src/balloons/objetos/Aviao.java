@@ -1,6 +1,7 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,6 +22,12 @@ public class Aviao extends BalloonsObjetos {
     private float b;
     private float ajusteRotacao;
     private boolean colidiu;
+    private float deltaTime;
+    private Sound audioJato;
+
+    public boolean isColidiu() {
+        return colidiu;
+    }
 
     public Aviao(Texture texture, float posicaoX, float posicaoY){
         this.colidiu = false;
@@ -44,6 +51,8 @@ public class Aviao extends BalloonsObjetos {
             ajusteRotacao = 30;
         }
         this.sprite.setRotation(ajusteRotacao);
+        this.audioJato = Gdx.audio.newSound(Gdx.files.internal("sons/jato.wav"));
+        this.deltaTime = 0f;
     }
 
     public void movimentar(OrthographicCamera cam, Balao balao){
@@ -51,6 +60,8 @@ public class Aviao extends BalloonsObjetos {
                 cam.position.y + Gdx.graphics.getHeight()/2 >= coordenadaY &&
                 cam.position.y + Gdx.graphics.getHeight()/2 - coordenadaY > alturaAviao){
             if(colidiu){
+                audioJato.stop();
+                audioJato.dispose();
                 if(naoSalvo){
                     xAlvo = coordenadaX;
                     naoSalvo = false;
@@ -72,6 +83,10 @@ public class Aviao extends BalloonsObjetos {
                 coordenadaX = coordenadaX + velocidade;
                 coordenadaY = coordenadaY + balao.getCoordenadaY() + balao.getTamanho() * 5 / 6 ;
             }else{
+                if(deltaTime == 0){
+                    audioJato.play();
+                    deltaTime++;
+                }
                 if(naoSalvo){
                     xAlvo = balao.getCoordenadaX();
                     naoSalvo = false;

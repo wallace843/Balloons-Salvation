@@ -1,6 +1,7 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,12 +31,14 @@ public class Passaro extends BalloonsObjetos{
     private float x;
     private float y;
     float deltaTime;
+    private Sound audioPassaro_asas;
+    private Sound audioPassaro_canto;
 
     public Passaro(Array<TextureRegion> passaroVoo, Array<TextureRegion> passaroPara, Array<TextureRegion> passaroAtaq, float posicaoX, float posicaoY){
         this.deltaTime = Gdx.graphics.getDeltaTime();
-        this.passaroVoo = new Animation<TextureRegion>(1f/12f,passaroVoo, Animation.PlayMode.LOOP);
-        this.passaroPara = new Animation<TextureRegion>(1f/12f,passaroPara,Animation.PlayMode.LOOP);
-        this.passaroAtaq = new Animation<TextureRegion>(1f/12f,passaroAtaq);
+        this.passaroVoo = new Animation<TextureRegion>(1f/24f,passaroVoo, Animation.PlayMode.LOOP);
+        this.passaroPara = new Animation<TextureRegion>(1f/24f,passaroPara,Animation.PlayMode.LOOP);
+        this.passaroAtaq = new Animation<TextureRegion>(1f/36f,passaroAtaq);
         this.y = posicaoY;
         this.x = posicaoX;
         this.velocidade = 10;
@@ -60,13 +63,15 @@ public class Passaro extends BalloonsObjetos{
         this.flagAtaque = false;
         this.flagRetorno = false;
         this.flagSaida = false;
+        this.audioPassaro_asas = Gdx.audio.newSound(Gdx.files.internal("sons/passaro_asas.wav"));
+        this.audioPassaro_canto = Gdx.audio.newSound(Gdx.files.internal("sons/passaro_canto.wav"));
         atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
     }
 
-    public void movimentar(Balao balao, float deltaTime){
-        float alturaBalao = balao.getSprite().getY() + balao.getSprite().getHeight() + 10;
+    public void movimentar(Balao balao){
+        float alturaBalao = balao.getSprite().getY() + balao.getSprite().getHeight() - 50;
         float xBalao = balao.getSprite().getX();
-        if(y - alturaBalao < distanciaAtaque){
+        if(y - alturaBalao < distanciaAtaque && x + sprite.getWidth() > 0 && x < BalloonsConstants.LARG_TELA ){
             if(flagInicio){
                 passaroInicial(alturaBalao,xBalao);
             }else if(flagAproximacao){
@@ -82,14 +87,16 @@ public class Passaro extends BalloonsObjetos{
     }
 
     private void passaroInicial(float alturaBalao, float xBalao){
+        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3)
+            audioPassaro_asas.play();
         if(BalloonsConstants.LARG_TELA/2 < x
                 || BalloonsConstants.LARG_TELA/2 > x + 200){
             x = x + deslX;
             y = y - deslY;
             deltaTime += Gdx.graphics.getDeltaTime();
-            atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
+            atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime));
         }else{
-            distanciaBase = y - alturaBalao + 10;
+            distanciaBase = y - alturaBalao + 15;
             float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
                     + Math.pow(xBalao + 50 - x,2)));
             deslX = (xBalao + 50 - x)*fator;
@@ -108,7 +115,9 @@ public class Passaro extends BalloonsObjetos{
     }
 
     private void passaroAproximacao(float alturaBalao){
-        if(distanciaBase > 9) {
+        if(passaroPara.getKeyFrameIndex(deltaTime) == 3)
+            audioPassaro_asas.play();
+        if(distanciaBase > 60) {
             distanciaBase = distanciaBase + deslY;
             x = x +deslX;
             y = alturaBalao + distanciaBase;
@@ -123,13 +132,16 @@ public class Passaro extends BalloonsObjetos{
     }
 
     private void passaroAtaque(float alturaBalao){
+        if(passaroPara.getKeyFrameIndex(deltaTime) == 3)
+            audioPassaro_asas.play();
         if(!passaroAtaq.isAnimationFinished(deltaTime)){
-            atualizarSprite((TextureRegion) this.passaroAtaq.getKeyFrame(deltaTime));
             distanciaBase = distanciaBase + deslY;
             x = x + deslX;
             y = alturaBalao + distanciaBase;
             deltaTime += Gdx.graphics.getDeltaTime();
+            atualizarSprite((TextureRegion) this.passaroAtaq.getKeyFrame(deltaTime));
         }else {
+            audioPassaro_canto.play();
             flagRetorno = true;
             flagAtaque = false;
             deltaTime = 0f;
@@ -137,7 +149,8 @@ public class Passaro extends BalloonsObjetos{
     }
 
     private void passaroRetorno(float alturaBalao, float xBalao){
-        System.out.println(distanciaBase);
+        if(passaroPara.getKeyFrameIndex(deltaTime) == 3)
+            audioPassaro_asas.play();
         if(distanciaBase < BalloonsConstants.ALT_TELA/2) {
             distanciaBase = distanciaBase + velocidade;
             y = alturaBalao + distanciaBase;
@@ -165,6 +178,8 @@ public class Passaro extends BalloonsObjetos{
     }
 
     private void passaroSair(){
+        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3)
+            audioPassaro_asas.play();
         if(x + 100 >= BalloonsConstants.LARG_TELA/2){
             x = x + velocidade;
             flip = false;

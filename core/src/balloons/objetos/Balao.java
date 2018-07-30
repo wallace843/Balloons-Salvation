@@ -1,6 +1,7 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +17,8 @@ public class Balao extends BalloonsObjetos{
     private float coordenadaY;
     private float vida;
     private Sprite balao;
+    private Sound audioBalao_atrito;
+    private Sound audioVento;
 
     public Balao(Texture balaoTexture) {
         this.tamanho = 300;
@@ -28,9 +31,15 @@ public class Balao extends BalloonsObjetos{
         this.balao.setOriginCenter();
         this.balao.setSize(tamanho,tamanho);
         this.balao.setPosition(coordenadaX,coordenadaY);
+        this.audioBalao_atrito = Gdx.audio.newSound(Gdx.files.internal("sons/balao_atrito.wav"));
+        this.audioVento =  Gdx.audio.newSound(Gdx.files.internal("sons/vento.wav"));
     }
 
     public void moverDireita(){
+        if( velocidade < 15) {
+            audioBalao_atrito.stop();
+            audioBalao_atrito.play();
+        }
         if(coordenadaX + velocidade <= Gdx.graphics.getWidth() - tamanho/1.5){
             coordenadaX = coordenadaX + velocidade;
         }
@@ -39,6 +48,10 @@ public class Balao extends BalloonsObjetos{
     }
 
     public void moverEsquerda(){
+        if( velocidade < 15) {
+            audioBalao_atrito.stop();
+            audioBalao_atrito.play();
+        }
         if(coordenadaX - velocidade >= -tamanho/3){
             coordenadaX = coordenadaX - velocidade;
         }

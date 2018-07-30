@@ -2,6 +2,8 @@ package balloons;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -27,9 +29,12 @@ public class BalloonsWorld implements ApplicationListener {
 	private Sprite ballonsSalvatioLogo;
 	private BitmapFont fonte;
 	private float nivelVida;
+	private Music musica;
 
     @Override
     public void create() {
+    	this.musica = Gdx.audio.newMusic(Gdx.files.internal("sons/so_alive.mp3"));
+    	this.musica.play();
 		this.ballonsSalvatioLogo = new Sprite(new Texture("BalloonsSalvation.png"));
         this.barraVida = new ShapeRenderer();
         this.barrafundo = new ShapeRenderer();
@@ -139,6 +144,6 @@ public class BalloonsWorld implements ApplicationListener {
 
 	@Override
 	public void dispose () {
-		batch.dispose();
+        batch.dispose();
 	}
 }

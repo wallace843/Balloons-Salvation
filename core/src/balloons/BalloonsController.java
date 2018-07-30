@@ -1,9 +1,9 @@
 package balloons;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -19,6 +19,7 @@ import balloons.objetos.Passaro;
 import balloons.objetos.Pipa;
 
 public class BalloonsController {
+    private Sound audioBalaoEstouro;
     private Nuvem[] nuvens;
     private Pipa[] pipas;
     private Passaro[] passaros;
@@ -28,6 +29,7 @@ public class BalloonsController {
     private Rectangle colisaoBalaoRect;
     private Circle colisaoInimigo;
     private Rectangle colisaoPipa;
+    private Sound audioBalao_colisao;
 
     public BalloonsController(){
         Texture nuvemTexture = new Texture("nuvem.png");
@@ -46,14 +48,16 @@ public class BalloonsController {
         this.pipas = nivel1.getPipas();
         this.avioes = nivel1.getAvioes();
         this.passaros = nivel1.getPassaros();
-
+        this.audioBalao_colisao = Gdx.audio.newSound(Gdx.files.internal("sons/balao_colisao.wav"));
+        this.audioBalaoEstouro = Gdx.audio.newSound(Gdx.files.internal("sons/balao_estouro.wav"));
     }
 
     public void atualizar(OrthographicCamera camera, float deltaTime){
         atualizarBalao();
         atualizarNuvens(camera);
         atualizarAvioes(camera);
-        atualizarPassaros(deltaTime);
+        atualizarPassaros();
+        atualizarPipas();
         if(!fimJogo())
             checarColisao();
     }
@@ -70,9 +74,15 @@ public class BalloonsController {
         }
     }
 
-    private void atualizarPassaros(float deltaTime){
+    private void atualizarPassaros(){
         for(Passaro p: passaros){
-            p.movimentar(balao, deltaTime);
+            p.movimentar(balao);
+        }
+    }
+
+    private void atualizarPipas(){
+        for(Pipa p: pipas){
+            p.movimentar();
         }
     }
 
@@ -97,10 +107,13 @@ public class BalloonsController {
         for(Aviao a : avioes){
             colisaoInimigo.setPosition(a.getTamanho()/2 + a.getSprite().getX(),a.getTamanho()/5 + a.getTamanho()/17 + a.getSprite().getY());
             if(colisaoInimigo.overlaps(colisaoBalao)){
-                if(balao.getVida() - 20 < 0)
+                if(balao.getVida() - 20 < 0) {
                     balao.setVida(0);
-                else
+                    audioBalaoEstouro.play();
+                }else
                     balao.setVida(balao.getVida() - 15f);
+                if(!a.isColidiu())
+                    audioBalao_colisao.play();
                 a.setColidiu(true);
                 a.setNaoSalvo(true);
             }
@@ -109,7 +122,12 @@ public class BalloonsController {
         for(Passaro p : passaros){
             colisaoInimigo.setPosition(p.getSprite().getWidth()/2 + p.getSprite().getX(),20 + p.getSprite().getY());
             if(colisaoInimigo.overlaps(colisaoBalao))
-            balao.setVida(balao.getVida() - 1f);
+                if(balao.getVida() - 20 < 0) {
+                    balao.setVida(0);
+                    audioBalaoEstouro.play();
+                }
+                else
+                    balao.setVida(balao.getVida() - 1f);
         }
 
         colisaoBalaoRect.set(balao.getSprite().getX() + 130f,balao.getSprite().getY() + 230, 40, 20);
@@ -120,7 +138,7 @@ public class BalloonsController {
                 balao.setSubida(0);
                 break;
             }else{
-                balao.setVelocidade(10);
+                balao.setVelocidade(15);
                 balao.setSubida(1);
             }
         }
