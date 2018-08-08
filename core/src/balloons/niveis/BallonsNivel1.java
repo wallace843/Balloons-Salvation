@@ -19,6 +19,7 @@ public class BallonsNivel1 {
     private List<Passaro> passaros;
     private List<Aviao> avioes;
 
+
     public BallonsNivel1(){
         this.mapa = new Pixmap(Gdx.files.internal("nivel_1.png"));
         this.pipas = new LinkedList<Pipa>();

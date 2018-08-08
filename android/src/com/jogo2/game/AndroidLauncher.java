@@ -4,13 +4,14 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
-import balloons.BalloonsWorld;
+import balloons.BalloonsJogo;
+import balloons.BalloonsPrincipal;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new BalloonsWorld(), config);
+		initialize(new BalloonsPrincipal(), config);
 	}
 }

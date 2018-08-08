@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Random;
 
-public class Nuvem extends BalloonsObjetos{
+public class Nuvem extends BalloonsObjeto {
     private float velocidade;
     private float tamanho;
     private float coordenadaX;
@@ -40,6 +40,16 @@ public class Nuvem extends BalloonsObjetos{
 
     @Override
     public void renderizar(SpriteBatch batch) {
+
+    }
+
+    @Override
+    public boolean colisao(Balao balao) {
+        return false;
+    }
+
+    @Override
+    public void movimentar(Balao balao) {
 
     }
 }

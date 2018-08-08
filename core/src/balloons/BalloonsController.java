@@ -1,5 +1,6 @@
 package balloons;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,7 +14,7 @@ import balloons.Util.BalloonsConstants;
 import balloons.niveis.BallonsNivel1;
 import balloons.objetos.Aviao;
 import balloons.objetos.Balao;
-import balloons.objetos.BalloonsObjetos;
+import balloons.objetos.BalloonsObjeto;
 import balloons.objetos.Nuvem;
 import balloons.objetos.Passaro;
 import balloons.objetos.Pipa;
@@ -29,9 +30,10 @@ public class BalloonsController {
     private Rectangle colisaoBalaoRect;
     private Circle colisaoInimigo;
     private Rectangle colisaoPipa;
-    private Sound audioBalao_colisao;
+    private Sound audioBalaoColisao;
+    private Game game;
 
-    public BalloonsController(){
+    public BalloonsController(Game game){
         Texture nuvemTexture = new Texture("nuvem.png");
         Texture balaoTexture = new Texture("balao.png");
         Random r = new Random();
@@ -48,7 +50,7 @@ public class BalloonsController {
         this.pipas = nivel1.getPipas();
         this.avioes = nivel1.getAvioes();
         this.passaros = nivel1.getPassaros();
-        this.audioBalao_colisao = Gdx.audio.newSound(Gdx.files.internal("sons/balao_colisao.wav"));
+        this.audioBalaoColisao = Gdx.audio.newSound(Gdx.files.internal("sons/balao_colisao.wav"));
         this.audioBalaoEstouro = Gdx.audio.newSound(Gdx.files.internal("sons/balao_estouro.wav"));
     }
 
@@ -112,8 +114,9 @@ public class BalloonsController {
                     audioBalaoEstouro.play();
                 }else
                     balao.setVida(balao.getVida() - 15f);
-                if(!a.isColidiu())
-                    audioBalao_colisao.play();
+                if(!a.isColidiu()) {
+                    audioBalaoColisao.play();
+                }
                 a.setColidiu(true);
                 a.setNaoSalvo(true);
             }
@@ -154,8 +157,8 @@ public class BalloonsController {
         return balao.getSprite().getY() > BalloonsConstants.LARG_TELA*10;
     }
 
-    public BalloonsObjetos[] gerarObjetos(){
-        BalloonsObjetos[] objetos = new BalloonsObjetos[nuvens.length + avioes.length + pipas.length + passaros.length + 1];
+    public BalloonsObjeto[] gerarObjetos(){
+        BalloonsObjeto[] objetos = new BalloonsObjeto[nuvens.length + avioes.length + pipas.length + passaros.length + 1];
         int i = 0;
         for(Nuvem n: nuvens){
             objetos[i] = n;
@@ -175,6 +178,10 @@ public class BalloonsController {
         }
         objetos[i] = balao;
         return objetos;
+    }
+
+    public void voltaMenu(){
+        game.setScreen(new BalloonsMenu(game));
     }
 
     public Balao getBalao() {

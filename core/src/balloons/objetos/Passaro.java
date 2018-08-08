@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 import balloons.Util.BalloonsConstants;
 
-public class Passaro extends BalloonsObjetos{
+public class Passaro extends BalloonsObjeto {
     private Sprite sprite;
     private int nAtaques;
     private float velocidade;
@@ -206,5 +206,10 @@ public class Passaro extends BalloonsObjetos{
     @Override
     public void renderizar(SpriteBatch batch) {
         sprite.draw(batch);
+    }
+
+    @Override
+    public boolean colisao(Balao balao) {
+        return false;
     }
 }

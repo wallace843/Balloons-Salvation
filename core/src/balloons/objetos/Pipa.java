@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
-public class Pipa extends BalloonsObjetos {
+public class Pipa extends BalloonsObjeto {
     private Sprite sprite;
     private Animation frame;
     private float deltaTime;
@@ -32,6 +32,16 @@ public class Pipa extends BalloonsObjetos {
 
     @Override
     public void renderizar(SpriteBatch batch) {
+
+    }
+
+    @Override
+    public boolean colisao(Balao balao) {
+        return false;
+    }
+
+    @Override
+    public void movimentar(Balao balao) {
 
     }
 

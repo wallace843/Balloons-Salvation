@@ -1,0 +1,26 @@
+atlas-botoes.png
+size: 763, 46
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+botao_jogar
+  rotate: false
+  xy: 0, 0
+  size: 254, 46
+  orig: 254, 46
+  offset: 0, 0
+  index: -1
+botao_opcoes
+  rotate: false
+  xy: 254, 0
+  size: 254, 46
+  orig: 254, 46
+  offset: 0, 0
+  index: -1
+botao_score
+  rotate: false
+  xy: 508, 0
+  size: 255, 46
+  orig: 255, 46
+  offset: 0, 0
+  index: -1

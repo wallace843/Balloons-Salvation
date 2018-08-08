@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import balloons.Util.BalloonsConstants;
 
 
-public class Balao extends BalloonsObjetos{
+public class Balao extends BalloonsObjeto {
     private float tamanho;
     private float velocidade;
     private float subida;
@@ -90,6 +90,16 @@ public class Balao extends BalloonsObjetos{
 
     @Override
     public void renderizar(SpriteBatch batch) {
+
+    }
+
+    @Override
+    public boolean colisao(Balao balao) {
+        return false;
+    }
+
+    @Override
+    public void movimentar(Balao balao) {
 
     }
 
