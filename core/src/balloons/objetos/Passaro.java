@@ -1,6 +1,7 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 
+import balloons.recursos.BalloonsImagens;
 import balloons.recursos.BalloonsSons;
 import balloons.util.BalloonsValores;
 
@@ -33,17 +35,17 @@ public class Passaro extends BalloonsObjeto {
     private boolean flip;
     private float x;
     private float y;
-    float deltaTime;
+    private float deltaTime;
     private Circle cirBalao;
     private Circle cirPassaro;
 
-    public Passaro(Array<TextureRegion> passaroVoo, Array<TextureRegion> passaroPara, Array<TextureRegion> passaroAtaq, float posicaoX, float posicaoY){
+    public Passaro(float posicaoX, float posicaoY){
         this.cirBalao = new Circle();
         this.cirPassaro = new Circle();
         this.deltaTime = Gdx.graphics.getDeltaTime();
-        this.passaroVoo = new Animation<TextureRegion>(1f/24f,passaroVoo, Animation.PlayMode.LOOP);
-        this.passaroPara = new Animation<TextureRegion>(1f/24f,passaroPara,Animation.PlayMode.LOOP);
-        this.passaroAtaq = new Animation<TextureRegion>(1f/36f,passaroAtaq);
+        this.passaroVoo = new Animation<TextureRegion>(1f/24f,pegarImageFrames(BalloonsImagens.imagem.passVooSheet), Animation.PlayMode.LOOP);
+        this.passaroPara = new Animation<TextureRegion>(1f/24f,pegarImageFrames(BalloonsImagens.imagem.passParSheet),Animation.PlayMode.LOOP);
+        this.passaroAtaq = new Animation<TextureRegion>(1f/36f,pegarImageFrames(BalloonsImagens.imagem.paassAtsheet));
         this.y = posicaoY;
         this.x = posicaoX;
         this.velocidade = 10;
@@ -110,10 +112,10 @@ public class Passaro extends BalloonsObjeto {
                     + Math.pow(xBalao + 50 - x,2)));
             deslX = (xBalao + 50 - x)*fator;
             deslY = -distanciaBase * fator;
-            if(deslX >= 0 && direita == false){
+            if(deslX >= 0 && !direita){
                 flip = false;
                 direita = true;
-            }else if(deslX < 0 && direita == true){
+            }else if(deslX < 0 && direita){
                 flip = true;
                 direita = false;
             }
@@ -176,10 +178,10 @@ public class Passaro extends BalloonsObjeto {
                     + Math.pow(xBalao + 50 - x,2)));
             deslX = (xBalao + 50 - x)*fator;
             deslY = -distanciaBase * fator;
-            if(deslX >= 0 && direita == false){
+            if(deslX >= 0 && !direita){
                 flip = false;
                 direita = true;
-            }else if(deslX < 0 && direita == true){
+            }else if(deslX < 0 && direita){
                 flip = true;
                 direita = false;
             }
@@ -237,5 +239,16 @@ public class Passaro extends BalloonsObjeto {
             BalloonsValores.VIDA--;
         }
         return false;
+    }
+
+    private Array<TextureRegion> pegarImageFrames(Texture local){
+        TextureRegion tmp[][] = TextureRegion.split(local, local.getWidth()/3, local.getHeight()/2);
+        Array<TextureRegion> regions = new Array<TextureRegion>();
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 3; j++) {
+                regions.add(tmp[i][j]);
+            }
+        }
+        return regions;
     }
 }

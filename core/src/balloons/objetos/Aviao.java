@@ -1,7 +1,6 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
@@ -21,10 +20,6 @@ public class Aviao extends BalloonsObjeto {
     private float deltaTime;
     private Circle cirAviao;
     private Circle cirBalao;
-
-    public boolean isColidiu() {
-        return colidiu;
-    }
 
     public Aviao(float posicaoX, float posicaoY){
         cirAviao = new Circle();
@@ -116,13 +111,5 @@ public class Aviao extends BalloonsObjeto {
             return true;
         }
         return false;
-    }
-
-    public void setColidiu(boolean colidiu){
-        this.colidiu = colidiu;
-    }
-
-    public void setNaoSalvo(boolean naoSalvo) {
-        this.naoSalvo = naoSalvo;
     }
 }

@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,32 +17,37 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+
+import java.util.Locale;
+
+import balloons.recursos.BalloonsImagens;
 import balloons.util.BalloonsValores;
 
 public class BalloonsScore implements Screen {
     private Game game;
     private Stage estagio;
     private int intervaloConstru;
-    private Skin skin;
-    private Image background;
     private Button botaoSalvar;
     private BitmapFont font;
 
     public BalloonsScore(Game game) {
         this.game = game;
         this.font = new BitmapFont(Gdx.files.internal("fonts/teste.fnt"));
+        BalloonsImagens.imagem.init();
     }
 
-    public void reconstruir(){
+    private void reconstruir(){
+        Skin skin;
+        Image background;
         skin = new Skin();
-        skin.add("botao",new Texture("botoes_balloon/botao_salvar.png"));
-        skin.add("back_input",new Texture("botoes_balloon/back_entrada.png"));
-        skin.add("cursor",new Texture("botoes_balloon/cursor.png"));
+        skin.add("botao",BalloonsImagens.imagem.botao_salvar);
+        skin.add("back_input",BalloonsImagens.imagem.back_entrada);
+        skin.add("cursor",BalloonsImagens.imagem.balloon_cursor);
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font;
         style.fontColor = Color.GOLD;
         Table tableBack = new Table();
-        background = new Image(new Texture("backgroundGeral.png"));
+        background = new Image(BalloonsImagens.imagem.backgroundGeral);
         tableBack.add(background);
         Table tableScore = new Table();
         tableScore.center();
@@ -59,8 +63,9 @@ public class BalloonsScore implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 botaoSalvar.setDisabled(true);
                 FileHandle registroScores = Gdx.files.local("maioresPontuacoes.txt");
-                registroScores.writeString(String.format("%09d",BalloonsValores.SCORE)+" "+entrada.getText()+" "+"\n",true);
-                game.setScreen(new BalloonsMenu(game));
+                registroScores.writeString(String.format(Locale.getDefault(),"%09d",BalloonsValores.SCORE)+" "+entrada.getText()+" "+"\n",true);
+                dispose();
+                game.setScreen(new BalloonsPontuacoes(game));
             }
         });
         tableScore.row();
@@ -117,6 +122,7 @@ public class BalloonsScore implements Screen {
 
     @Override
     public void dispose() {
-
+        font.dispose();
+        BalloonsImagens.imagem.dispose();
     }
 }

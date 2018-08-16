@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -23,39 +22,35 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.Arrays;
 import java.util.Collections;
 
+import balloons.recursos.BalloonsImagens;
 import balloons.util.BalloonsValores;
 
 public class BalloonsPontuacoes implements Screen {
     private BitmapFont font;
     private Game game;
     private Stage estagio;
-    private int intervaloConstru;
-    private Skin skin;
-    private Image background;
     private Button botaoMenu;
-    private ScrollPane scrollPane;
 
     public BalloonsPontuacoes(Game game) {
         this.game = game;
         this.font = new BitmapFont(Gdx.files.internal("fonts/teste.fnt"));
-    }
-
-    public void reconstruir(){
-
+        BalloonsImagens.imagem.init();
     }
 
     @Override
     public void show() {
+        Skin skin;
+        Image background;
         estagio = new Stage();
         Gdx.input.setInputProcessor(estagio);
         skin = new Skin();
-        skin.add("botao",new Texture("botoes_balloon/botao_menu.png"));
-        skin.add("sel", new Texture("botoes_balloon/back_entrada.png"));
+        skin.add("botao",BalloonsImagens.imagem.botao_menu);
+        skin.add("sel", BalloonsImagens.imagem.back_entrada);
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font;
         style.fontColor = Color.GOLD;
         Table tableBack = new Table();
-        background = new Image(new Texture("backgroundGeral.png"));
+        background = new Image(BalloonsImagens.imagem.backgroundGeral);
         tableBack.add(background);
         Table table = new Table();
         Label titulo = new Label("SCORES", style);
@@ -78,6 +73,7 @@ public class BalloonsPontuacoes implements Screen {
             index++;
         }
         itens.setItems(registros);
+        ScrollPane scrollPane;
         scrollPane = new ScrollPane(itens);
         table.add(scrollPane);
         Table tableB = new Table();
@@ -87,6 +83,7 @@ public class BalloonsPontuacoes implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 botaoMenu.setDisabled(true);
+                dispose();
                 game.setScreen(new BalloonsMenu(game));
             }
         });
@@ -132,5 +129,6 @@ public class BalloonsPontuacoes implements Screen {
     @Override
     public void dispose() {
         font.dispose();
+        BalloonsImagens.imagem.dispose();
     }
 }

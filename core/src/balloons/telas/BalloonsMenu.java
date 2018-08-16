@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -14,19 +13,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import balloons.recursos.BalloonsImagens;
+import balloons.telas.jogo.BalloonsJogo;
 import balloons.util.BalloonsValores;
 
 public class BalloonsMenu implements Screen {
     private Game game;
     private Stage estagio;
-    private Image imagemFundo;
     private Button botaoJogar;
     private Button botaoScore;
     private float intervaloConstru;
-    private Skin skin;
 
     public BalloonsMenu(Game game) {
         this.game = game;
+        BalloonsImagens.imagem.init();
     }
 
     @Override
@@ -37,11 +37,13 @@ public class BalloonsMenu implements Screen {
     }
 
     private void reconstruir(){
+        Image imagemFundo;
+        Skin skin;
         skin = new Skin();
-        skin.add("botao_jogar",new Texture("botoes_balloon/botao_jogar.png"));
-        skin.add("botao_score",new Texture("botoes_balloon/botao_score.png"));
+        skin.add("botao_jogar", BalloonsImagens.imagem.botao_jogar);
+        skin.add("botao_score",BalloonsImagens.imagem.botao_score);
         Table construBackground = new Table();
-        imagemFundo = new Image(new Texture("background.png"));
+        imagemFundo = new Image(BalloonsImagens.imagem.background);
         construBackground.add(imagemFundo);
         Table botoes = new Table();
         botoes.center().bottom();
@@ -54,6 +56,7 @@ public class BalloonsMenu implements Screen {
                 botaoScore.setDisabled(true);
                 BalloonsValores.SCORE = 0;
                 BalloonsValores.VIDA = 3;
+                dispose();
                 game.setScreen(new BalloonsJogo(game,"NIVEL 1"));
             }
         });
@@ -64,6 +67,7 @@ public class BalloonsMenu implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 botaoJogar.setDisabled(true);
                 botaoScore.setDisabled(true);
+                dispose();
                 game.setScreen(new BalloonsPontuacoes(game));
             }
         });
@@ -113,6 +117,6 @@ public class BalloonsMenu implements Screen {
 
     @Override
     public void dispose() {
-
+        BalloonsImagens.imagem.dispose();
     }
 }

@@ -2,9 +2,6 @@ package balloons.niveis;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -56,44 +53,25 @@ public class BallonsNivel {
 
         private int cor;
 
-        private PIXEL_TIPO (int r, int g, int b) {
+        PIXEL_TIPO (int r, int g, int b) {
             cor = r << 24 | g << 16 | b << 8 | 0xff;
         }
 
         public boolean mesmaCor (int cor) {
             return this.cor == cor;
         }
-
-        public int getColor () {
-            return cor;
-        }
     }
 
     private void init(){
         int currentPixel;
-        Texture cobraTexure = new Texture("cobra.png");
-        Texture galhoTexure = new Texture("galho.png");
-        Texture posteTexure = new Texture("poste.png");
-        Texture bolhaTexure = new Texture("bolha.png");
-        Texture nuvemTexture = new Texture("nuvem.png");
-        Texture predioTexture1 = new Texture("predio1.png");
-        Texture predioTexture2 = new Texture("predio2.png");
-        Texture florestaTexture1 = new Texture("floresta1.png");
-        Texture florestaTexture2 = new Texture("floresta2.png");
-        Texture florestaTexture3 = new Texture("floresta3.png");
-        Array<TextureRegion> pipaMov = pegarImageFrames("pipa1.png");
-        Array<TextureRegion> passaroVoo = pegarImageFrames("passaro.png");
-        Array<TextureRegion> passaroPara = pegarImageFrames("passaro2.png");
-        Array<TextureRegion> passaroAtaq = pegarImageFrames("passaro3.png");
-        Array<TextureRegion> drone = pegarImageFrames("drone.png");
         float escala = Gdx.graphics.getWidth() / mapa.getWidth();
         for(int pixelY = 0; pixelY < mapa.getHeight(); pixelY++ ){
             for(int pixelX = 0; pixelX < mapa.getWidth(); pixelX++){
                 currentPixel = mapa.getPixel(pixelX,pixelY);
                 if(PIXEL_TIPO.PIPA.mesmaCor(currentPixel)) {
-                    objeto1.add(new Pipa(pipaMov, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
+                    objeto1.add(new Pipa(pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.POSTE.mesmaCor(currentPixel)) {
-                    objeto1.add(new Poste(posteTexure, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
+                    objeto1.add(new Poste(pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.GALHO.mesmaCor(currentPixel)) {
                     objeto1.add(new Galho(pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.AVIAO.mesmaCor(currentPixel)){
@@ -101,7 +79,7 @@ public class BallonsNivel {
                 }else if(PIXEL_TIPO.COBRA.mesmaCor(currentPixel)){
                     objeto2.add(new Cobra(pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.PASSARO.mesmaCor(currentPixel)){
-                    objeto3.add(new Passaro(passaroVoo, passaroPara, passaroAtaq, pixelX * escala, (mapa.getHeight() - pixelY) * escala));
+                    objeto3.add(new Passaro(pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.DRONE.mesmaCor(currentPixel)){
                     objeto3.add(new Drone(pixelX * escala, (mapa.getHeight() - pixelY) * escala));
                 }else if(PIXEL_TIPO.BOLHA.mesmaCor(currentPixel)){
@@ -117,9 +95,9 @@ public class BallonsNivel {
                     for(float i = 0; i < 25;i++){
                         int n = r.nextInt(2);
                         if(n == 1)
-                            objeto5.add(new Predio(predioTexture2, i));
+                            objeto5.add(new Predio(BalloonsImagens.imagem.predioTexture2, i));
                         else
-                            objeto5.add(new Predio(predioTexture1, i));
+                            objeto5.add(new Predio(BalloonsImagens.imagem.predioTexture1, i));
                     }
                 }else if(PIXEL_TIPO.FLORESTA.mesmaCor(currentPixel)){
                     for(float i = 0; i < 25; i++){
@@ -133,18 +111,6 @@ public class BallonsNivel {
                 }
             }
         }
-    }
-
-    private Array<TextureRegion> pegarImageFrames(String local){
-        Texture sheet =  new Texture(local);
-        TextureRegion tmp[][] = TextureRegion.split(sheet, sheet.getWidth()/3, sheet.getHeight()/2);
-        Array<TextureRegion> regions = new Array<TextureRegion>();
-        for(int i = 0; i < 2; i++){
-            for(int j = 0; j < 3; j++) {
-                regions.add(tmp[i][j]);
-            }
-        }
-        return regions;
     }
 
     public List<BalloonsObjeto> getObjeto1(){ return objeto1; }

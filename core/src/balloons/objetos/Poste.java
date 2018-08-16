@@ -1,7 +1,6 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,7 +15,7 @@ public class Poste extends BalloonsObjeto{
     private Rectangle retPoste;
     private int cont;
 
-    public Poste(Texture posteTexture, float posicaoX, float posicaoY){
+    public Poste(float posicaoX, float posicaoY){
         this.retBalao = new Rectangle();
         this.retPoste = new Rectangle();
         this.colidiu = false;

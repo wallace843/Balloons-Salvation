@@ -60,23 +60,22 @@ public class BalloonsImagens {
         this.passVooSheet = new Texture("passaro.png");
         this.passParSheet = new Texture("passaro2.png");
         this.paassAtsheet = new Texture("passaro3.png");
-
     }
 
     public void dispose(){
-        cobraTexure.dispose();
-        galhoTexure.dispose();
-        posteTexure.dispose();
-        bolhaTexure.dispose();
-        aviaoTexture.dispose();
-        nuvemTexture.dispose();
-        predioTexture1.dispose();
-        predioTexture2.dispose();
-        florestaTexture1.dispose();
-        florestaTexture2.dispose();
-        florestaTexture3.dispose();
-        balaoTexture.dispose();
-        ballonsSalvatioLogo.dispose();
+        this.cobraTexure.dispose();
+        this.galhoTexure.dispose();
+        this.posteTexure.dispose();
+        this.bolhaTexure.dispose();
+        this.aviaoTexture.dispose();
+        this.nuvemTexture.dispose();
+        this.predioTexture1.dispose();
+        this.predioTexture2.dispose();
+        this.florestaTexture1.dispose();
+        this.florestaTexture2.dispose();
+        this.florestaTexture3.dispose();
+        this.balaoTexture.dispose();
+        this.ballonsSalvatioLogo.dispose();
         this.background.dispose();
         this.backgroundGeral.dispose();
         this.botao_jogar.dispose();

@@ -8,7 +8,7 @@ import balloons.util.BalloonsValores;
 
 
 public class Floresta extends BalloonsObjeto {
-    Sprite floresta;
+    private Sprite floresta;
     public Floresta(Texture texture, float i){
         floresta = new Sprite(texture);
         floresta.setSize(BalloonsValores.LARG_TELA, BalloonsValores.LARG_TELA*0.4f);

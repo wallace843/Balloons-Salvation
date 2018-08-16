@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,31 +16,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import balloons.recursos.BalloonsImagens;
 import balloons.util.BalloonsValores;
 
 public class BalloonsFim implements Screen {
     private Game game;
-    private String nomeNivel;
     private Stage estagio;
     private int intervaloConstru;
-    private Skin skin;
-    private Image background;
     private Button botaoProximo;
     private BitmapFont font;
 
     public BalloonsFim(Game game) {
         this.game = game;
         this.font = new BitmapFont(Gdx.files.internal("fonts/teste.fnt"));
+        BalloonsImagens.imagem.init();
     }
 
-    public void reconstruir(){
+    private void reconstruir(){
+        Skin skin;
+        Image background;
         skin = new Skin();
-        skin.add("botao",new Texture("botoes_balloon/botao_proximo.png"));
+        skin.add("botao",BalloonsImagens.imagem.botao_proximo);
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font;
         style.fontColor = Color.GOLD;
         Table tableBack = new Table();
-        background = new Image(new Texture("backgroundGeral.png"));
+        background = new Image(BalloonsImagens.imagem.backgroundGeral);
         tableBack.add(background);
         Table tableNome = new Table();
         Label areafim = new Label("FIM DE JOGO!", style);
@@ -52,6 +52,7 @@ public class BalloonsFim implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 botaoProximo.setDisabled(true);
+                dispose();
                 game.setScreen(new BalloonsScore(game));
             }
         });
@@ -109,5 +110,6 @@ public class BalloonsFim implements Screen {
     @Override
     public void dispose() {
         this.font.dispose();
+        BalloonsImagens.imagem.dispose();
     }
 }

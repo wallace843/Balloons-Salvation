@@ -36,7 +36,7 @@ public class Drone extends BalloonsObjeto {
     private boolean flip;
     private float x;
     private float y;
-    float deltaTime;
+    private float deltaTime;
     private Circle cirBalao;
     private Circle cirDrone;
     private int cont;
@@ -116,10 +116,10 @@ public class Drone extends BalloonsObjeto {
                     + Math.pow(xBalao + 50 - x,2)));
             deslX = (xBalao + 50 - x)*fator;
             deslY = -distanciaBase * fator;
-            if(deslX >= 0 && direita == false){
+            if(deslX >= 0 && !direita){
                 flip = false;
                 direita = true;
-            }else if(deslX < 0 && direita == true){
+            }else if(deslX < 0 && direita){
                 flip = true;
                 direita = false;
             }
@@ -170,10 +170,10 @@ public class Drone extends BalloonsObjeto {
                     + Math.pow(xBalao + 50 - x,2)));
             deslX = (xBalao + 50 - x)*fator;
             deslY = -distanciaBase * fator;
-            if(deslX >= 0 && direita == false){
+            if(deslX >= 0 && !direita){
                 flip = false;
                 direita = true;
-            }else if(deslX < 0 && direita == true){
+            }else if(deslX < 0 && direita){
                 flip = true;
                 direita = false;
             }

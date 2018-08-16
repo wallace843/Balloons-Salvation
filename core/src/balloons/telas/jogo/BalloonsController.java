@@ -1,4 +1,4 @@
-package balloons.telas;
+package balloons.telas.jogo;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

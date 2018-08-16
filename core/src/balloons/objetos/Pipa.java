@@ -1,6 +1,7 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import balloons.recursos.BalloonsImagens;
 import balloons.util.BalloonsValores;
 
 public class Pipa extends BalloonsObjeto {
@@ -19,13 +21,13 @@ public class Pipa extends BalloonsObjeto {
     private Rectangle retPipa;
     private int cont;
 
-    public Pipa(Array<TextureRegion> pipaMove, float posicaoX, float posicaoY){
+    public Pipa(float posicaoX, float posicaoY){
         this.cont = 0;
         this.retBalao = new Rectangle();
         this.retPipa = new Rectangle();
         this.colidiu = false;
         this.deltaTime = 0f;
-        this.frame = new Animation(1f/6f,pipaMove,Animation.PlayMode.LOOP_PINGPONG);
+        this.frame = new Animation(1f/6f,pegarImageFrames(),Animation.PlayMode.LOOP_PINGPONG);
         float tamanho = 270;
         this.pipa = new Sprite((TextureRegion) frame.getKeyFrame(deltaTime,true));
         this.pipa.setSize(16*tamanho/9,tamanho);
@@ -77,5 +79,17 @@ public class Pipa extends BalloonsObjeto {
         }
         colidiu = colisao(balao);
         renderizar(batch);
+    }
+
+    private Array<TextureRegion> pegarImageFrames(){
+        Texture local = BalloonsImagens.imagem.pipaSheet;
+        TextureRegion tmp[][] = TextureRegion.split(local, local.getWidth()/3, local.getHeight()/2);
+        Array<TextureRegion> regions = new Array<TextureRegion>();
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 3; j++) {
+                regions.add(tmp[i][j]);
+            }
+        }
+        return regions;
     }
 }

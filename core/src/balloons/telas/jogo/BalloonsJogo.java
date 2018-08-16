@@ -1,4 +1,4 @@
-package balloons.telas;
+package balloons.telas.jogo;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -10,16 +10,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
+import java.util.Locale;
 import balloons.recursos.BalloonsImagens;
 import balloons.recursos.BalloonsSons;
+import balloons.telas.BalloonsFim;
+import balloons.telas.BalloonsMudanca;
 import balloons.util.BalloonsValores;
 
 public class BalloonsJogo implements Screen {
 	private SpriteBatch batch;
 	private BalloonsController controller;
 	private OrthographicCamera camera;
-	private float cameraY;
 	private float cameraX;
 	private Sprite ballonsSalvatioLogo;
 	private BitmapFont fonte;
@@ -43,11 +44,10 @@ public class BalloonsJogo implements Screen {
 		this.nomeNivel = nomeNivel;
 		this.ballonsSalvatioLogo = new Sprite(BalloonsImagens.imagem.ballonsSalvatioLogo);
 		this.game = game;
-        this.cameraY = Gdx.graphics.getHeight()/2;
         this.cameraX = Gdx.graphics.getWidth()/2;
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.camera.position.set(cameraX, cameraY, 0);
+        this.camera.position.set(cameraX, Gdx.graphics.getHeight()/2, 0);
         this.camera.update();
 		this.fonte = new BitmapFont(Gdx.files.internal("fonts/teste.fnt"));
 		this.fonte.setColor(Color.GOLD);
@@ -84,6 +84,7 @@ public class BalloonsJogo implements Screen {
             controller.atualizar(batch);
             if(controller.getBalao().getCoordenadaY() > BalloonsValores.LARG_TELA*10 + BalloonsValores.ALT_TELA) {
                 BalloonsSons.som.musica1.stop();
+                dispose();
                 game.setScreen(new BalloonsMudanca(game, nomeNivel));
             }
         }
@@ -104,14 +105,14 @@ public class BalloonsJogo implements Screen {
 				camera.position.y-BalloonsValores.ALT_TELA/2-raio, 2*raio,2*raio);
 		batch.draw(back,camera.position.x-BalloonsValores.LARG_TELA/2+5,
                 camera.position.y+BalloonsValores.ALT_TELA/2-(60+t),t*7,t+20);
-		fonte.draw(batch,String.format("%09d",BalloonsValores.SCORE),
+		fonte.draw(batch,String.format(Locale.getDefault(),"%09d",BalloonsValores.SCORE),
                 camera.position.x-BalloonsValores.LARG_TELA/2+t+40,
 				camera.position.y+BalloonsValores.ALT_TELA/2-60);
 		batch.draw(bolha,camera.position.x-BalloonsValores.LARG_TELA/2+25,
                 camera.position.y+BalloonsValores.ALT_TELA/2-(50+t),t,t);
         batch.draw(back,camera.position.x+BalloonsValores.LARG_TELA/2-t*6-40,
                 camera.position.y+BalloonsValores.ALT_TELA/2-(60+t),t*6+30,t+20);
-        fonte.draw(batch,String.format("%09d",BalloonsValores.VIDA),
+        fonte.draw(batch,String.format(Locale.getDefault(),"%09d",BalloonsValores.VIDA),
                 camera.position.x+BalloonsValores.LARG_TELA/2-6*t-25,
                 camera.position.y+BalloonsValores.ALT_TELA/2-60);
         batch.draw(balao,camera.position.x+BalloonsValores.LARG_TELA/2-35-t,
