@@ -1,20 +1,23 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.utils.Array;
+
 import java.util.Random;
 
+import balloons.recursos.BalloonsImagens;
 import balloons.recursos.BalloonsSons;
 import balloons.util.BalloonsValores;
 
-public class Passaro extends BalloonsObjeto {
+public class Drone extends BalloonsObjeto {
     private boolean colidiu;
-    private Sprite passaro;
+    private Sprite drone;
     private int nAtaques;
     private float velocidade;
     private float distanciaAtaque;
@@ -27,23 +30,25 @@ public class Passaro extends BalloonsObjeto {
     private float deslY;
     private float distanciaBase;
     private boolean direita;
-    private Animation passaroVoo;
-    private Animation passaroPara;
-    private Animation passaroAtaq;
+    private Animation droneVoo;
+    private Animation dronePara;
+    private Animation droneAtaq;
     private boolean flip;
     private float x;
     private float y;
     float deltaTime;
     private Circle cirBalao;
-    private Circle cirPassaro;
+    private Circle cirDrone;
+    private int cont;
 
-    public Passaro(Array<TextureRegion> passaroVoo, Array<TextureRegion> passaroPara, Array<TextureRegion> passaroAtaq, float posicaoX, float posicaoY){
+    public Drone(float posicaoX, float posicaoY){
+        this.cont = 0;
         this.cirBalao = new Circle();
-        this.cirPassaro = new Circle();
+        this.cirDrone = new Circle();
         this.deltaTime = Gdx.graphics.getDeltaTime();
-        this.passaroVoo = new Animation<TextureRegion>(1f/24f,passaroVoo, Animation.PlayMode.LOOP);
-        this.passaroPara = new Animation<TextureRegion>(1f/24f,passaroPara,Animation.PlayMode.LOOP);
-        this.passaroAtaq = new Animation<TextureRegion>(1f/36f,passaroAtaq);
+        this.droneVoo = new Animation<TextureRegion>(1f/24f, pegarImageFrames(BalloonsImagens.imagem.droneSheet), Animation.PlayMode.LOOP);
+        this.dronePara = new Animation<TextureRegion>(1f/24f, pegarImageFrames(BalloonsImagens.imagem.droneSheet),Animation.PlayMode.LOOP);
+        this.droneAtaq = new Animation<TextureRegion>(1f/36f, pegarImageFrames(BalloonsImagens.imagem.droneSheet));
         this.y = posicaoY;
         this.x = posicaoX;
         this.velocidade = 10;
@@ -68,24 +73,29 @@ public class Passaro extends BalloonsObjeto {
         this.flagAtaque = false;
         this.flagRetorno = false;
         this.flagSaida = false;
-        atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
+        atualizarSprite((TextureRegion) this.droneVoo.getKeyFrame(deltaTime,true));
     }
 
     @Override
     public void movimentar(SpriteBatch batch, Balao balao){
         float alturaBalao = balao.getCoordenadaY() + balao.getTamanho() - 50;
         float xBalao = balao.getCoordenadaX();
-        if(y - alturaBalao < distanciaAtaque && x + passaro.getWidth() > 0 && x < BalloonsValores.LARG_TELA ){
+        if(y - alturaBalao < distanciaAtaque && x + drone.getWidth() > 0 && x < BalloonsValores.LARG_TELA ){
+            if(cont == 0){
+                cont = 10;
+                BalloonsSons.som.audioMotor.play(0.1f);
+            }else
+                cont--;
             if(flagInicio){
-                passaroInicial(alturaBalao,xBalao);
+                droneInicial(alturaBalao,xBalao);
             }else if(flagAproximacao){
-                passaroAproximacao(alturaBalao);
+                droneAproximacao(alturaBalao);
             }else if(flagAtaque){
-                passaroAtaque(alturaBalao);
+                droneAtaque(alturaBalao);
             }else if(flagRetorno){
-                passaroRetorno(alturaBalao,balao.getCoordenadaX());
+                droneRetorno(alturaBalao,balao.getCoordenadaX());
             }else if(flagSaida){
-                passaroSair();
+                droneSair();
             }
         }
         if(!colidiu)
@@ -93,17 +103,13 @@ public class Passaro extends BalloonsObjeto {
         renderizar(batch);
     }
 
-    private void passaroInicial(float alturaBalao, float xBalao){
-        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3) {
-            BalloonsSons.som.audioPassaro_asas.stop();
-            BalloonsSons.som.audioPassaro_asas.play();
-        }
+    private void droneInicial(float alturaBalao, float xBalao){
         if(BalloonsValores.LARG_TELA/2 < x
                 || BalloonsValores.LARG_TELA/2 > x + 200){
             x = x + deslX;
             y = y - deslY;
             deltaTime += Gdx.graphics.getDeltaTime();
-            atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime));
+            atualizarSprite((TextureRegion) this.droneVoo.getKeyFrame(deltaTime));
         }else{
             distanciaBase = y - alturaBalao + 15;
             float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
@@ -123,18 +129,14 @@ public class Passaro extends BalloonsObjeto {
         }
     }
 
-    private void passaroAproximacao(float alturaBalao){
+    private void droneAproximacao(float alturaBalao){
         colidiu = false;
-        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3) {
-            BalloonsSons.som.audioPassaro_asas.stop();
-            BalloonsSons.som.audioPassaro_asas.play();
-        }
         if(distanciaBase > 60) {
             distanciaBase = distanciaBase + deslY;
             x = x +deslX;
             y = alturaBalao + distanciaBase;
             deltaTime += Gdx.graphics.getDeltaTime();
-            atualizarSprite((TextureRegion) this.passaroPara.getKeyFrame(deltaTime,true));
+            atualizarSprite((TextureRegion) this.dronePara.getKeyFrame(deltaTime,true));
         }else {
             --nAtaques;
             flagAtaque = true;
@@ -143,17 +145,13 @@ public class Passaro extends BalloonsObjeto {
         }
     }
 
-    private void passaroAtaque(float alturaBalao){
-        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3) {
-            BalloonsSons.som.audioPassaro_asas.stop();
-            BalloonsSons.som.audioPassaro_asas.play();
-        }
-        if(!passaroAtaq.isAnimationFinished(deltaTime)){
+    private void droneAtaque(float alturaBalao){
+        if(!droneAtaq.isAnimationFinished(deltaTime)){
             distanciaBase = distanciaBase + deslY;
             x = x + deslX;
             y = alturaBalao + distanciaBase;
             deltaTime += Gdx.graphics.getDeltaTime();
-            atualizarSprite((TextureRegion) this.passaroAtaq.getKeyFrame(deltaTime));
+            atualizarSprite((TextureRegion) this.droneAtaq.getKeyFrame(deltaTime));
         }else {
             flagRetorno = true;
             flagAtaque = false;
@@ -161,16 +159,12 @@ public class Passaro extends BalloonsObjeto {
         }
     }
 
-    private void passaroRetorno(float alturaBalao, float xBalao){
-        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3) {
-            BalloonsSons.som.audioPassaro_asas.stop();
-            BalloonsSons.som.audioPassaro_asas.play();
-        }
+    private void droneRetorno(float alturaBalao, float xBalao){
         if(distanciaBase < BalloonsValores.ALT_TELA/2) {
             distanciaBase = distanciaBase + velocidade;
             y = alturaBalao + distanciaBase;
             this.deltaTime += Gdx.graphics.getDeltaTime();
-            atualizarSprite((TextureRegion) this.passaroPara.getKeyFrame(deltaTime,true));
+            atualizarSprite((TextureRegion) this.dronePara.getKeyFrame(deltaTime,true));
         }else if(nAtaques > 0){
             float fator = (float) Math.sqrt(Math.pow(velocidade,2)/(Math.pow(distanciaBase,2)
                     + Math.pow(xBalao + 50 - x,2)));
@@ -192,11 +186,7 @@ public class Passaro extends BalloonsObjeto {
         }
     }
 
-    private void passaroSair(){
-        if(passaroVoo.getKeyFrameIndex(deltaTime) == 3) {
-            BalloonsSons.som.audioPassaro_asas.stop();
-            BalloonsSons.som.audioPassaro_asas.play();
-        }
+    private void droneSair(){
         if(x + 100 >= BalloonsValores.LARG_TELA/2){
             x = x + velocidade;
             flip = false;
@@ -206,36 +196,45 @@ public class Passaro extends BalloonsObjeto {
             flip = true;
         }
         this.deltaTime += Gdx.graphics.getDeltaTime();
-        atualizarSprite((TextureRegion) this.passaroVoo.getKeyFrame(deltaTime,true));
+        atualizarSprite((TextureRegion) this.droneVoo.getKeyFrame(deltaTime,true));
     }
 
-   private void atualizarSprite(TextureRegion textureRegion){
-        this.passaro = new Sprite(textureRegion);
-        passaro.setSize(200,200);
-        passaro.setPosition(x,y);
-        passaro.setFlip(flip,false);
-   }
+    private void atualizarSprite(TextureRegion textureRegion){
+        this.drone = new Sprite(textureRegion);
+        drone.setSize(200,200);
+        drone.setPosition(x,y);
+        drone.setFlip(flip,false);
+    }
 
     @Override
-    public void renderizar(SpriteBatch batch) { passaro.draw(batch); }
+    public void renderizar(SpriteBatch batch) { drone.draw(batch); }
 
     @Override
     public boolean colisao(Balao balao) {
         cirBalao.setRadius(balao.getTamanho()/5);
         cirBalao.setPosition(balao.getTamanho()/2 + balao.getCoordenadaX(), balao.getTamanho()*3/5 + balao.getCoordenadaY());
-        cirPassaro.setRadius(15);
-        cirPassaro.setPosition(passaro.getWidth()/2 + passaro.getX(),20 + passaro.getY());
-        if(cirBalao.overlaps(cirPassaro)) {
+        cirDrone.setRadius(15);
+        cirDrone.setPosition(drone.getWidth()/2 + drone.getX(),20 + drone.getY());
+        if(cirBalao.overlaps(cirDrone)) {
             if (BalloonsValores.VIDA == 0) {
-                BalloonsSons.som.audioBalaoEstouro.stop();
                 BalloonsSons.som.audioBalaoEstouro.play();
             }else {
-                BalloonsSons.som.audioBalaoColisao.stop();
                 BalloonsSons.som.audioBalaoColisao.play();
             }
             colidiu = true;
             BalloonsValores.VIDA--;
         }
         return false;
+    }
+
+    private Array<TextureRegion> pegarImageFrames(Texture local){
+        TextureRegion tmp[][] = TextureRegion.split(local, local.getWidth()/3, local.getHeight()/2);
+        Array<TextureRegion> regions = new Array<TextureRegion>();
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 3; j++) {
+                regions.add(tmp[i][j]);
+            }
+        }
+        return regions;
     }
 }

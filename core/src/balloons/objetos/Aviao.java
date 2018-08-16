@@ -1,123 +1,121 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
+import balloons.recursos.BalloonsImagens;
+import balloons.recursos.BalloonsSons;
+import balloons.util.BalloonsValores;
 
-public class Aviao extends BalloonsObjetos {
-    private int tamanho;
+public class Aviao extends BalloonsObjeto {
     private float velocidade;
-    private float coordenadaX;
-    private float coordenadaY;
     private int alturaAviao;
-    private boolean direitaAviao;
     private boolean naoSalvo;
     private float xAlvo;
-    private float yAlvo;
-    private Sprite sprite;
+    private Sprite aviao;
     private float a;
     private float b;
-    private float ajusteRotacao;
     private boolean colidiu;
     private float deltaTime;
-    private Sound audioJato;
+    private Circle cirAviao;
+    private Circle cirBalao;
 
     public boolean isColidiu() {
         return colidiu;
     }
 
-    public Aviao(Texture texture, float posicaoX, float posicaoY){
+    public Aviao(float posicaoX, float posicaoY){
+        cirAviao = new Circle();
+        cirBalao = new Circle();
         this.colidiu = false;
         this.naoSalvo = true;
-        this.tamanho = 250;
-        this.sprite = new Sprite(texture);
-        this.coordenadaX = posicaoX;;
-        if(coordenadaX < Gdx.graphics.getWidth()/2)
-            coordenadaX = - tamanho;
-        this.coordenadaY = posicaoY;
-        this.sprite.setSize(tamanho,tamanho);
-        this.sprite.setOriginCenter();
-        this.ajusteRotacao = -30;
-        this.sprite.setPosition(coordenadaX,coordenadaY);
+        this.aviao = new Sprite(BalloonsImagens.imagem.aviaoTexture);
+        this.aviao.setSize(BalloonsValores.LARG_TELA/3, BalloonsValores.LARG_TELA/3);
+        this.aviao.setX(posicaoX);
+        if(aviao.getX() < Gdx.graphics.getWidth()/2)
+            aviao.setX(-aviao.getWidth());
+        this.aviao.setOriginCenter();
+        this.aviao.setPosition(aviao.getX(),posicaoY);
         this.alturaAviao = Gdx.graphics.getHeight()*4/10;
-        this.direitaAviao = false;
-        if(coordenadaX < Gdx.graphics.getWidth()/2){
-            this.sprite.setFlip(true,false);
-            this.sprite.setRotation(30);
-            this.direitaAviao = true;
-            ajusteRotacao = 30;
+        if(aviao.getX() < Gdx.graphics.getWidth()/2){
+            this.aviao.setFlip(true,false);
         }
-        this.sprite.setRotation(ajusteRotacao);
-        this.audioJato = Gdx.audio.newSound(Gdx.files.internal("sons/jato.wav"));
         this.deltaTime = 0f;
     }
 
-    public void movimentar(OrthographicCamera cam, Balao balao){
-        if(cam.position.y - Gdx.graphics.getHeight()/2 <= coordenadaY +tamanho &&
-                cam.position.y + Gdx.graphics.getHeight()/2 >= coordenadaY &&
-                cam.position.y + Gdx.graphics.getHeight()/2 - coordenadaY > alturaAviao){
-            if(colidiu){
-                audioJato.stop();
-                audioJato.dispose();
-                if(naoSalvo){
-                    xAlvo = coordenadaX;
+    @Override
+    public void movimentar(SpriteBatch batch, Balao balao) {
+        if (balao.getCoordenadaY() <= aviao.getY() + aviao.getHeight() &&
+                balao.getCoordenadaY() + Gdx.graphics.getHeight() >= aviao.getY() &&
+                balao.getCoordenadaY() + Gdx.graphics.getHeight() - aviao.getY() > alturaAviao) {
+            if (colidiu) {
+                BalloonsSons.som.audioJato.stop();
+                if (naoSalvo) {
+                    xAlvo = aviao.getX();
                     naoSalvo = false;
-                    a = -20000000/Gdx.graphics.getWidth();
-                    if (velocidade <= 0){
+                    a = -20000000 / Gdx.graphics.getWidth();
+                    if (velocidade <= 0) {
                         b = -2;
                         velocidade = -15;
-                    }
-                    else{
+                    } else {
                         b = 2;
                         velocidade = 15;
                     }
                 }
-                coordenadaY = (float) ((a* Math.pow(coordenadaX - xAlvo, 2))/10000000 + b*(coordenadaX - xAlvo));
-                if(velocidade >= 0)
-                    sprite.setRotation(sprite.getRotation() - 10);
+                aviao.setY((float) ((a * Math.pow(aviao.getX() - xAlvo, 2)) / 10000000 + b * (aviao.getX() - xAlvo)));
+                if (velocidade >= 0)
+                    aviao.setRotation(aviao.getRotation() - 10);
                 else
-                    sprite.setRotation(sprite.getRotation() + 10);
-                coordenadaX = coordenadaX + velocidade;
-                coordenadaY = coordenadaY + balao.getCoordenadaY() + balao.getTamanho() * 5 / 6 ;
-            }else{
-                if(deltaTime == 0){
-                    audioJato.play();
+                    aviao.setRotation(aviao.getRotation() + 10);
+                aviao.setX(aviao.getX() + velocidade);
+                aviao.setY(aviao.getY() + balao.getCoordenadaY() + balao.getTamanho() * 5 / 6);
+            } else {
+                if (deltaTime == 0) {
+                    BalloonsSons.som.audioJato.play();
                     deltaTime++;
                 }
-                if(naoSalvo){
+                if (naoSalvo) {
                     xAlvo = balao.getCoordenadaX();
                     naoSalvo = false;
-                    a = (float) ((- (coordenadaY - balao.getCoordenadaY()))/(Math.pow(coordenadaX - balao.getCoordenadaX(), 2)));
-                    b = (2*(coordenadaY - balao.getCoordenadaY()))/(coordenadaX - balao.getCoordenadaX());
-                    this.velocidade = (xAlvo - coordenadaX)/(100 - (6*cam.position.y)/(Gdx.graphics.getHeight()/2));
+                    a = (float) ((-(aviao.getY() - balao.getCoordenadaY())) / (Math.pow(aviao.getX() - balao.getCoordenadaX(), 2)));
+                    b = (2 * (aviao.getY() - balao.getCoordenadaY())) / (aviao.getX() - balao.getCoordenadaX());
+                    this.velocidade = (xAlvo - aviao.getX()) / (100 - (6 * balao.getCoordenadaY() + (Gdx.graphics.getHeight() / 2
+                            - (Gdx.graphics.getWidth() * 50) / 720)) / (Gdx.graphics.getHeight() / 2));
                 }
-                coordenadaY = (float) (a* Math.pow(coordenadaX - xAlvo,2) + b*(coordenadaX - xAlvo));
-
-                sprite.setRotation((float) (Math.toDegrees(Math.atan(2*a*(coordenadaX - xAlvo) + b)) + ajusteRotacao));
-                coordenadaX = coordenadaX + velocidade;
-                coordenadaY = coordenadaY + balao.getCoordenadaY();
+                aviao.setY((float) (a * Math.pow(aviao.getX() - xAlvo, 2) + b * (aviao.getX() - xAlvo)));
+                aviao.setRotation((float) (Math.toDegrees(Math.atan(2 * a * (aviao.getX() - xAlvo) + b))));
+                aviao.setX(aviao.getX() + velocidade);
+                aviao.setY(aviao.getY() + balao.getCoordenadaY());
             }
         }
-        if (velocidade > 0)
-            sprite.setPosition(coordenadaX + Gdx.graphics.getWidth()/15, coordenadaY);
-        else
-            sprite.setPosition(coordenadaX, coordenadaY);
-    }
-
-    public int getTamanho() {
-        return tamanho;
-    }
-
-    public Sprite getSprite() {
-        return sprite;
+        if (!colidiu) {
+            colidiu = colisao(balao);
+        }
+        aviao.setPosition(aviao.getX(), aviao.getY());
+        renderizar(batch);
     }
 
     @Override
-    public void renderizar(SpriteBatch batch) {
+    public void renderizar(SpriteBatch batch) { aviao.draw(batch); }
 
+    @Override
+    public boolean colisao(Balao balao) {
+        cirBalao.setRadius(balao.getTamanho()/5);
+        cirAviao.setRadius(aviao.getWidth()/17);
+        cirAviao.setPosition(aviao.getWidth()/2 + aviao.getX(),aviao.getWidth()/5 + aviao.getWidth()/17 + aviao.getY());
+        cirBalao.setPosition(balao.getTamanho()/2 + balao.getCoordenadaX(), balao.getTamanho()*3/5 + balao.getCoordenadaY());
+        if(cirAviao.overlaps(cirBalao)){
+            if(BalloonsValores.VIDA == 0) {
+                BalloonsSons.som.audioBalaoEstouro.play();
+            }
+            BalloonsValores.VIDA--;
+            BalloonsSons.som.audioBalaoColisao.play();
+            naoSalvo = true;
+            return true;
+        }
+        return false;
     }
 
     public void setColidiu(boolean colidiu){

@@ -4,6 +4,9 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 
+import balloons.telas.BalloonsJogo;
+import balloons.telas.BalloonsMenu;
+
 public class BalloonsPrincipal extends Game{
     @Override
     public void create() {

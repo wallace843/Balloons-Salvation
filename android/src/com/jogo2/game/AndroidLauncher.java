@@ -4,7 +4,6 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
-import balloons.BalloonsJogo;
 import balloons.BalloonsPrincipal;
 
 public class AndroidLauncher extends AndroidApplication {

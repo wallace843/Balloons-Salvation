@@ -1,12 +1,13 @@
 package balloons.objetos;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import balloons.Util.BalloonsConstants;
+import balloons.recursos.BalloonsImagens;
+import balloons.recursos.BalloonsSons;
+import balloons.util.BalloonsValores;
 
 
 public class Balao extends BalloonsObjeto {
@@ -15,30 +16,24 @@ public class Balao extends BalloonsObjeto {
     private float subida;
     private float coordenadaX;
     private float coordenadaY;
-    private float vida;
     private Sprite balao;
-    private Sound audioBalao_atrito;
-    private Sound audioVento;
 
-    public Balao(Texture balaoTexture) {
-        this.tamanho = 300;
-        this.coordenadaY = 50;
+    public Balao() {
+        this.tamanho = 300*BalloonsValores.GAME_ESCALA;
+        this.coordenadaY = (Gdx.graphics.getWidth()*50)/720;
         this.coordenadaX = Gdx.graphics.getWidth()/2 - tamanho/2;
-        this.velocidade = 15;
-        this.subida = 1;
-        this.vida = BalloonsConstants.LARG_TELA/4f;
-        this.balao = new Sprite(balaoTexture);
+        this.velocidade = 15* BalloonsValores.GAME_ESCALA;
+        this.subida = BalloonsValores.GAME_ESCALA;
+        this.balao = new Sprite(BalloonsImagens.imagem.balaoTexture);
         this.balao.setOriginCenter();
         this.balao.setSize(tamanho,tamanho);
         this.balao.setPosition(coordenadaX,coordenadaY);
-        this.audioBalao_atrito = Gdx.audio.newSound(Gdx.files.internal("sons/balao_atrito.wav"));
-        this.audioVento =  Gdx.audio.newSound(Gdx.files.internal("sons/vento.wav"));
     }
 
-    public void moverDireita(){
+    private void moverDireita(){
         if( velocidade < 15) {
-            audioBalao_atrito.stop();
-            audioBalao_atrito.play();
+            BalloonsSons.som.audioBalao_atrito.stop();
+            BalloonsSons.som.audioBalao_atrito.play();
         }
         if(coordenadaX + velocidade <= Gdx.graphics.getWidth() - tamanho/1.5){
             coordenadaX = coordenadaX + velocidade;
@@ -47,10 +42,10 @@ public class Balao extends BalloonsObjeto {
         balao.setPosition(coordenadaX, coordenadaY);
     }
 
-    public void moverEsquerda(){
+    private void moverEsquerda(){
         if( velocidade < 15) {
-            audioBalao_atrito.stop();
-            audioBalao_atrito.play();
+            BalloonsSons.som.audioBalao_atrito.stop();
+            BalloonsSons.som.audioBalao_atrito.play();
         }
         if(coordenadaX - velocidade >= -tamanho/3){
             coordenadaX = coordenadaX - velocidade;
@@ -59,7 +54,7 @@ public class Balao extends BalloonsObjeto {
         balao.setPosition(coordenadaX, coordenadaY);
     }
 
-    public void moverCima() {
+    private void moverCima() {
         coordenadaY = coordenadaY + subida;
         balao.setPosition(coordenadaX, coordenadaY);
     }
@@ -76,22 +71,8 @@ public class Balao extends BalloonsObjeto {
         return tamanho;
     }
 
-    public float getVida() {
-        return vida;
-    }
-
-    public void setVida(float vida) {
-        this.vida = vida;
-    }
-
-    public Sprite getSprite() {
-        return balao;
-    }
-
     @Override
-    public void renderizar(SpriteBatch batch) {
-
-    }
+    public void renderizar(SpriteBatch batch) { balao.draw(batch); }
 
     @Override
     public boolean colisao(Balao balao) {
@@ -99,8 +80,19 @@ public class Balao extends BalloonsObjeto {
     }
 
     @Override
-    public void movimentar(Balao balao) {
-
+    public void movimentar(SpriteBatch batch, Balao balao) {
+        if(Gdx.input.isTouched()){
+            float pressX = Gdx.input.getX();
+            float pressY = Gdx.graphics.getHeight() - Gdx.input.getY();
+            if(Math.sqrt(Math.pow(pressX,2)+Math.pow(pressY,2)) < Gdx.graphics.getWidth()/2){
+                moverEsquerda();
+            }else if(Math.sqrt(Math.pow(pressX - Gdx.graphics.getWidth(),2)+Math.pow(pressY,2)) < Gdx.graphics.getWidth()/2){
+                moverDireita();
+            }else
+                moverCima();
+        }else
+            moverCima();
+        renderizar(batch);
     }
 
     public void setVelocidade(float velocidade) {
